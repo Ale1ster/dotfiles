@@ -1,0 +1,71 @@
+background yes
+use_xft yes
+xftfont HandelGotD:size=8
+xftalpha 0.4
+update_interval 2
+total_run_times 0
+own_window yes
+#own_window_type override
+own_window_type desktop
+own_window_argb_visual yes
+own_window_argb_value 100
+own_window_transparent yes
+own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
+double_buffer yes
+minimum_size 200 5
+maximum_width 400
+draw_shades no
+draw_outline no
+draw_borders no
+draw_graph_borders no
+default_color white
+default_shade_color red
+default_outline_color green
+alignment bottom_right
+gap_x 25
+gap_y 20
+no_buffers yes
+uppercase no
+cpu_avg_samples 2
+net_avg_samples 1
+override_utf8_locale no
+use_spacer true
+top_name_width 18
+
+TEXT
+#${goto 100}${font :size=20}${time %H:%M}${font} ${goto 200}${Time %A %m %d %Y}
+${tab 20} ${font :size=9}${color slate grey}UpTime: ${color white}$uptime ${font}${alignr} ${color darkcyan}${pre_exec whoami} @ $nodename
+${tab 15}${color yellow}$sysname $kernel $alignc${tab 15}$machine $alignr${color lightblue}Intel Dual Core 887 ${tab 15}${freq_g cpu0}Ghz
+${cpugraph cpu0 10,400 ffffff ffffff}
+${color white}CPU_1  ${cpu cpu1}% ${goto 74} ${color lightgrey}${cpubar cpu1 7,150} ${cpugraph cpu1 10,175 ffffff ffffff}
+${color white}CPU_2  ${cpu cpu2}% ${goto 74} ${color lightgrey}${cpubar cpu2 7,150} ${cpugraph cpu2 10,175 ffffff ffffff}
+
+${color darkgreen}MEMORY $hr
+${color green}MEM ${color yellowgreen} ${goto 60} $mem / $memmax ${goto 170} $memperc%${goto 210}${color red}/home ${color slategrey} ${goto 270} ${fs_used /home} / ${fs_size /home} $alignr ${fs_free_perc /home}%
+${color darkolivegreen}${membar 6,200} ${color slategrey}${fs_bar /home}
+
+${color darkgreen}Disk I/O $hr
+${color dimgray}${diskiograph 16,400}
+${color darkgreen}Top Processes $hr
+${alignc}${color saddlebrown}Processes:   ${color peru}$running_processes /   ${color peru}$processes
+${color red}CPU ${color white}${goto 130}CPU%  MEM%  ${color red}MEM ${color white}$alignr MEM%  CPU%
+
+${color darkorange}${top name 1}${goto 125}${top cpu 1} ${goto 165}${top mem 1} ${goto 210}${color  royalblue3}${top_mem name 1}${goto 330}${top_mem mem 1} ${goto 370}${top_mem cpu 1}
+${color     orange}${top name 2}${goto 125}${top cpu 2} ${goto 165}${top mem 2} ${goto 210}${color   royalblue}${top_mem name 2}${goto 330}${top_mem mem 2} ${goto 370}${top_mem cpu 2}
+${color       tan2}${top name 3}${goto 125}${top cpu 3} ${goto 165}${top mem 3} ${goto 210}${color   steelblue}${top_mem name 3}${goto 330}${top_mem mem 3} ${goto 370}${top_mem cpu 3}
+${color        tan}${top name 4}${goto 125}${top cpu 4} ${goto 165}${top mem 4} ${goto 210}${color  lightblue3}${top_mem name 4}${goto 330}${top_mem mem 4} ${goto 370}${top_mem cpu 4}
+${color      wheat}${top name 5}${goto 125}${top cpu 5} ${goto 165}${top mem 5} ${goto 210}${color   lightblue}${top_mem name 5}${goto 330}${top_mem mem 5} ${goto 370}${top_mem cpu 5}
+
+${color darkgreen}IP $hr
+${color darkolivegreen}External ${goto 100} ${color white}${texeci 300 curl ifconfig.me} ${goto 210}${color darkolivegreen}wlp3s0 $alignr  ${color white}${addr wlp3s0}
+
+${color darkgreen}Network $hr
+${color red}Down ${color white} ${tab 70} ${downspeed wlp3s0}/s  ${color red}Up ${color white}$alignr ${upspeed wlp3s0}/s
+${color darkolivegreen}${downspeedgraph wlp3s0 16,200} ${color darkseagreen}${upspeedgraph wlp3s0 16,200}
+${color lightgreen}Connections ${tab 70} ${color darkkhaki}${tcp_portmon 32768 61000 count} $alignr Service/Port${color white}
+${tcp_portmon 32768 61000 rhost 0} $alignr ${tcp_portmon 32768 61000 rservice 0}
+${tcp_portmon 32768 61000 rhost 1} $alignr ${tcp_portmon 32768 61000 rservice 1}
+${tcp_portmon 32768 61000 rhost 2} $alignr ${tcp_portmon 32768 61000 rservice 2}
+${tcp_portmon 32768 61000 rhost 3} $alignr ${tcp_portmon 32768 61000 rservice 3}
+${tcp_portmon 32768 61000 rhost 4} $alignr ${tcp_portmon 32768 61000 rservice 4}
+${tcp_portmon 32768 61000 rhost 5} $alignr ${tcp_portmon 32768 61000 rservice 5}
