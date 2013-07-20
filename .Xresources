@@ -1,0 +1,25 @@
+! XTerm
+XTerm*scrollBar:	false
+XTerm*background:	black
+XTerm*foreground:	white
+XTerm*cursorColor:	grey50
+XTerm*locale:		UTF-8
+XTerm*utf8:			2
+
+! Urxvt
+URxvt*termName:		rxvt-unicode
+URxvt*scrollBar:	false
+URxvt*background:	black
+URxvt*foreground:	white
+URxvt*cursorColor:	green
+URxvt*imLocale:		ja_JP.EUC-JP
+
+! ATerm
+Aterm*scrollBar:	false
+Aterm*background:	black
+Aterm*foreground:	white
+Aterm*cursorColor:	blue
+Aterm*transparent:	true
+Aterm*shading:		20
+Aterm*fading:		50
+Aterm*font:			fixed
