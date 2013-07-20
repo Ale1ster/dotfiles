@@ -1,0 +1,17 @@
+Config	{ font			= "xft:Terminus:size=8:antialias=True"
+		, bgColor		= "black"
+		, fgColor		= "grey"
+		, position		= Top
+		, lowerOnStart	= True
+		, commands		=	[ Run Cpu ["--Low","5", "--High","50", "--normal","green", "--high","red", "--template","<fc=#1c8c1c>Cpu</fc>: <total>%"] 10
+							, Run Memory ["--Low","5", "--High","50", "--normal","yellow", "--high","red", "--template","<fc=#1c8c1c>Mem</fc>: <usedratio>%"] 10
+							, Run Swap ["--template","<fc=#1c8c1c>Swap</fc>: <usedratio>%"] 10
+							, Run Network "wlp3s0" ["--Low","80", "--High","200", "--normal","green", "--high","red", "--suffix","False", "--template","<fc=#1c8c1c><dev></fc>: <rx>Kb/s - <tx>Kb/s"] 20
+							, Run Battery ["--Low","10", "--High","80", "--high","green", "--normal","yellow", "--low","red", "--template","<fc=#1c8c1c>Bat</fc>: <left>% / <timeleft>", "--", "-f","ACAD/online", "-O","On", "-o","Off"] 300
+							, Run Date "%a %b %_d %_H:%M" "date" 300
+							, Run StdinReader
+							]
+		, sepChar = "%"
+		, alignSep = "}{"
+		, template = "%StdinReader% }{ %battery% <fc=#0080ff>|</fc> %cpu% <fc=#0080ff>|</fc> %memory% * %swap% <fc=#0080ff>|</fc> %wlp3s0% <fc=#0080ff>|</fc> <fc=#ee9a00>%date%</fc>"
+		}
