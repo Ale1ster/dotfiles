@@ -1,2 +1,5 @@
 README.md skip
 .bashrc.load.hide skip
+.xmobarrc.bak skip
+setup.sh exec
+setup.sh skip
