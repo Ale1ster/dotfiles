@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# === This script will be used as a controller for any manual labour needed outside of dotfile installation.
+
 # =1= .Xresources alias files.
 # Setup .Xdefaults symlink to .Xresources
 if [ ! -f ".Xdefaults" ]; then
