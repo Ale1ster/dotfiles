@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Background
+feh --bg-scale ~/Pictures/Wallpapers/hd_1366_x_768_taringa.jpg &
+
+# Xdefaults
+xrdb -merge ~/.Xdefaults
+
+# Pointer setup (previous: left_ptr, crosshair)
+xsetroot -cursor_name tcross &
+
+# Keyboard setup
+setxkbmap -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,gr,jp" &
+
+# Composite window manager
+#xmcompmgr -c &
+
+# Main
+exec /usr/bin/dwm
