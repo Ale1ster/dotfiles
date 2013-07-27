@@ -1,0 +1,28 @@
+XXkb.image.path: /home/ale1ster/.xxkb
+XXkb.group.base: 1
+XXkb.group.alt: 2
+XXkb.group.alt: 3
+XXkb.mainwindow.enable: yes
+XXkb.mainwindow.appicon: yes
+XXkb.mainwindow.type: tray
+XXkb.mainwindow.in_tray: true
+XXkb.mainwindow.geometry: 16x16+0+0
+XXkb.mainwindow.border.color: white
+XXkb.mainwindow.border.width: 1
+XXkb.mainwindow.image.1: us16.xpm
+XXkb.mainwindow.image.2: gr16.xpm
+XXkb.mainwindow.image.3: jp16.xpm
+XXkb.mainwindow.image.4: 
+XXkb.mainwindow.label.enable: no
+XXkb.mainwindow.label.text.1: en
+XXkb.mainwindow.label.text.2: gr
+XXkb.mainwindow.label.text.3: jp
+XXkb.mainwindow.label.text.4: 
+XXkb.mainwindow.label.background: black
+XXkb.mainwindow.label.foreground: white
+XXkb.mainwindow.label.font: -*-terminus-*-*-*-*-12-*-*-*-*-*-*-
+XXkb.button.enable: no
+XXkb.controls.add_when_start: yes
+XXkb.controls.add_when_create: yes
+XXkb.controls.mainwindow_delete: no
+XXkb.controls.two_state: no
