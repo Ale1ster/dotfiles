@@ -1,0 +1,13 @@
+[color]
+    ui = true
+[format]
+    pretty = full
+[core]
+    editor = vim
+[user]
+	email = spiritual.dragon.of.ra@gmail.com
+	name = Aristoteles Panaras
+[alias]
+	tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --all --abbrev-commit --date=relative
+[push]
+	default = simple
