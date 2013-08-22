@@ -76,7 +76,11 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 	, ((modMask .|. controlMask, xK_Left), prevWS)
 	, ((modMask, xK_h), sendMessage Shrink)
 	, ((modMask, xK_l), sendMessage Expand)
---	, ((modMask .|. shiftMask, xK_t), withFocused $ windows . W.sink)
+	{-
+--		==	These operations have some redraw bugs...
+	, ((modMask .|. shiftMask, xK_t), withFocused $ windows . W.sink)
+	, ((modMask, xK_t), withFocused (\windowId -> do  { float windowId } ))
+	-}
 	, ((modMask, xK_comma), sendMessage (IncMasterN 1))
 	, ((modMask, xK_period), sendMessage (IncMasterN (-1)))
 	] ++
@@ -120,9 +124,10 @@ fullLayout		=	named "O"  $ noBorders Full
 tabbedLayout	=	named ".." $ avoidStruts $ tabbed shrinkText myTabConfig
 imLayout		=	named "-|" $ avoidStruts $ reflectHoriz $ withIM (1%3) skypeRoster basicLayout
 	where
-		skypeRoster = (ClassName "Skype")  `And` (Not (Title "Options")) `And` (Not (Role "ConversationsWindow"))
+		skypeRoster = (ClassName "Skype")  `And` (Not (Title "Options")) `And` (Not (Role "ConversationsWindow")) `And` (Not (Title "Add a Skype Contact"))
 myBaseLayout	=	tallLayout ||| wideLayout ||| gridLayout ||| tabbedLayout ||| fullLayout
 myLayout		=	onWorkspace "0:im" ( imLayout ||| tallLayout ||| tabbedLayout ) $
+					onWorkspace "6:remote" ( tabbedLayout ||| fullLayout ||| tallLayout ) $
 					myBaseLayout
 					
 
@@ -134,20 +139,26 @@ myScratchpads	=
 	] where role = stringProperty "WM_WINDOW_ROLE"
 
 -- Manage Hooks
-myManageHook	= manageDocks <+> myFloatHook <+> myScratchpadManageHook <+> myNamedScratchpadManageHook <+> manageHook defaultConfig
+myManageHook	= manageDocks <+> myFloatHook <+> myScratchpadManageHook <+> myNamedScratchpadManageHook -- <+> manageHook defaultConfig
 myFloatHook		= composeAll
-	[ className =? "Firefox" --> moveToWeb
---	, className =? "Firefox" --> unfloat
-	, className =? "Chromium" --> moveToWeb
---	, className =? "Chromium" --> unfloat
-	, className =? "Skype" --> moveToIM
---	, className =? "Skype" --> unfloat
+	[ className =? "Firefox"	-->	moveToWeb
+--	, className =? "Firefox"	-->	unfloat
+	, className =? "Chromium"	-->	moveToWeb
+--	, className =? "Chromium"	-->	unfloat
+	, className =? "Skype"		-->	moveToIM
+--	, className =? "Skype"		-->	unfloat
+	, className =? "X2goclient"	-->	moveToRemote
+	, className =? "X2GoAgent"	-->	moveToRemote
+	, className =? "MPlayer"	--> doFloat
+	, className =? "MPPlaylist"	--> moveToFun
+	, className =? "MPPlaylist"	--> unfloat
 	, stringProperty "WM_WINDOW_ROLE" =? "CallWindow" --> doFloat
 	] where
-	unfloat		= ask >>= doF . W.sink
-	moveToWeb	= doF $ W.shift "2:web"
-	moveToFun	= doF $ W.shift "9:fun"
-	moveToIM	= doF $ W.shift "0:im"
+	unfloat			= ask >>= doF . W.sink
+	moveToWeb		= doF $ W.shift "2:web"
+	moveToFun		= doF $ W.shift "9:fun"
+	moveToIM		= doF $ W.shift "0:im"
+	moveToRemote	= doF $ W.shift "6:remote"
 myNamedScratchpadManageHook	= namedScratchpadManageHook myScratchpads
 myScratchpadManageHook		= scratchpadManageHook (W.RationalRect 0.1 0.15 0.8 0.65)
 myFocusFollowsMouse			= True
