@@ -200,7 +200,7 @@ input {
 #
 audio_output {
 	type			"alsa"
-	name			"My ALSA Device"
+	name			"ALSA Output"
 	mixer_type		"software"
 	mixer_device	"default"
 	mixer_control	"PCM"
@@ -269,7 +269,7 @@ audio_output {
 #
 audio_output {
 	type		"httpd"
-	name		"My HTTP Stream"
+	name		"HTTP Stream"
 	encoder		"vorbis"		# optional, vorbis or lame
 	port		"8000"
 	bind_to_address	"0.0.0.0"		# optional, IPv4 or IPv6
@@ -305,7 +305,7 @@ audio_output {
 #
 audio_output {
 	type		"fifo"
-	name		"My FIFO Output"
+	name		"FIFO Output"
 	path		"/home/ale1ster/.mpd/mpd.fifo"
 	format		"44100:16:2"
 }
