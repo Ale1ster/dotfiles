@@ -95,7 +95,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 	] ++
 	[ ((modMask, xK_Return), spawn "xterm -e tmux")
 --	, ((modMask, xK_l), spawn "i3lock -n -c 0b3b1b")
---	, ((modMask, xK_l), spawn "i3lock -n -c 151515")	--Expand collision
+	, ((modMask .|. shiftMask, xK_k), spawn "i3lock -n -c 151515")
 	, ((modMask .|. shiftMask, xK_l), spawn "i3lock -n -i ~/Pictures/screensaver.png")
 	, ((modMask, xK_p), spawn "dmenu_run")
 	, ((modMask, xK_f), spawn "firefox > /dev/null")
