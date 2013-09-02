@@ -18,11 +18,11 @@ browser_display_mode                    = "columns"
 media_library_disable_two_column_mode   = "no"
 
 # Visualization
-visualizer_color                        = "magenta"
+visualizer_color                        = "red"
 visualizer_in_stereo                    = "yes"
 visualizer_fifo_path                    = "/home/ale1ster/.mpd/mpd.fifo"
 visualizer_output_name                  = "FIFO Output"
-visualizer_sync_interval                = "1"
+#visualizer_sync_interval                = "1"
 visualizer_type                         = "spectrum"
 visualizer_look                         = ".|"
 
@@ -41,8 +41,8 @@ selected_item_suffix                    = "$5"
 song_status_format                      = "{(%l) }{%a - }{%t}|{%f}"
 song_window_title_format                = "{%a - }{%t}|{%f}"
 song_columns_list_format                = "(5)[magenta]{l} (28)[green]{a} (30)[blue]{b} (50)[white]{t}[white]"
-alternative_header_first_line_format    = "{%t}"
-alternative_header_second_line_format   = "$7{%a} - $5{%b} $8{(%y)}"
+alternative_header_first_line_format    = "$6{%t}$0"
+alternative_header_second_line_format   = "$7{%a} - $5{%b} $8{(%y)}$0"
 
 # Various settings
 mouse_support                           = "no"
