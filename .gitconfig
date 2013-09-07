@@ -3,7 +3,8 @@
 [format]
     pretty = full
 [core]
-    editor = vim
+	editor = vim
+	autocrlf = false
 [user]
 	email = spiritual.dragon.of.ra@gmail.com
 	name = Aristoteles Panaras
