@@ -236,7 +236,7 @@ audio_output {
 	type		"shout"
 	encoding	"ogg"			# optional
 	name		"Laptop Shout Stream"
-	host		"TODO:ICECAST_SERVER_URL"
+	host		"unbearable_proxy.mooo.com"
 	port		"8000"
 	mount		"/laptop_mpd.ogg"
 	password	"TODO:SOURCE_PASSWORD"
