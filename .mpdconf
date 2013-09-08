@@ -232,26 +232,26 @@ audio_output {
 #
 # An example of a shout output (for streaming to Icecast):
 #
-#audio_output {
-#	type		"shout"
-#	encoding	"ogg"			# optional
-#	name		"My Shout Stream"
-#	host		"localhost"
-#	port		"8000"
-#	mount		"/mpd.ogg"
-#	password	"hackme"
+audio_output {
+	type		"shout"
+	encoding	"ogg"			# optional
+	name		"Laptop Shout Stream"
+	host		"TODO:ICECAST_SERVER_URL"
+	port		"8000"
+	mount		"/laptop_mpd.ogg"
+	password	"TODO:SOURCE_PASSWORD"
 #	quality		"5.0"
-#	bitrate		"128"
-#	format		"44100:16:1"
-##	protocol	"icecast2"		# optional
-##	user		"source"		# optional
-##	description	"My Stream Description"	# optional
+	bitrate		"128"
+	format		"44100:16:2"
+	protocol	"icecast2"		# optional
+	user		"source"		# optional
+	description	"Briareos Laptop Stream"	# optional
 ##	url		"http://example.com"	# optional
-##	genre		"jazz"			# optional
-##	public		"no"			# optional
-##	timeout		"2"			# optional
-##	mixer_type      "software"		# optional
-#}
+	genre		"various"			# optional
+	public		"no"			# optional
+	timeout		"2"			# optional
+#	mixer_type      "hardware"		# optional
+}
 #
 # An example of a recorder output:
 #
