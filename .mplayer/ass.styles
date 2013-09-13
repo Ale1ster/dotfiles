@@ -1,0 +1,8 @@
+[Script Info]
+; http://fileformats.wikia.com/wiki/SubStation_Alpha
+ScriptType: v4.00+
+Collisions: Normal
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, Encoding, PrimaryColour, SecondaryColour, BackColour, OutlineColour, Bold, Italic, Underline, StrikeOut, Spacing, Alignment, BorderStyle, Outline, Shadow, MarginL, MarginR, MarginV
+Style: Default, DejaVu Sans, 18, 1, &h00ffffff, &h0000ffff, &h00000000, &h00000000, 0, 0, 0, 0, -0.50, 2, 1, 1, 0, 20, 20, 8

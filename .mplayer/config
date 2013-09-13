@@ -1,0 +1,483 @@
+#### default configuration that applies to every file
+[default]
+
+
+### messages
+## enable color console output on terminals with ansi color support
+msgcolor=true
+nomsgcolor=false
+## prepend module name to console messages (I like the default, but this is useful for debugging)
+msgmodule=true
+#nomsgmodule=false
+## msglevels
+msglevel:cfgparser=4
+msglevel:global=5
+msglevel:cplayer=5
+msglevel:input=5
+msglevel:network=5
+msglevel:cache=5
+msglevel:header=5
+msglevel:playtree=5
+msglevel:statusline=5
+msglevel:osd=5
+msglevel:vo=5
+msglevel:ao=5
+msglevel:decaudio=5
+msglevel:decvideo=5
+msglevel:demuxer=5
+msglevel:demux=5
+msglevel:ds=5
+msglevel:muxer=5
+msglevel:afilter=5
+msglevel:vfilter=5
+msglevel:xacodec=5
+msglevel:codeccfg=5
+msglevel:stream=5
+msglevel:open=5
+msglevel:dvd=5
+msglevel:parsees=5
+msglevel:win32=5
+msglevel:seek=5
+msglevel:avsync=5
+msglevel:autoq=5
+msglevel:subreader=5
+msglevel:ass=5
+msglevel:vobsub=5
+msglevel:spudec=5
+msglevel:cpudetect=5
+msglevel:identify=2
+msglevel:osdep=5
+msglevel:fixme=5
+msglevel:radio=2
+msglevel:tv=2
+msglevel:lirc=2
+msglevel:all=0
+## benchmarking
+benchmark=true
+## message to be printed before playback
+playing-msg='Have a nice time :)\n'
+## disable prevention of statusline display (be aware in case of broken terminal output (\r)
+quiet=false
+noquiet=true
+
+
+### osd
+## message duration in milliseconds
+osd-duration=2000
+## how fractions of seconds of the current timestamp are displayed (first 2 decimals)
+osd-fractions=1
+## mode in which osd starts in (?)
+osdlevel=1
+## display osd messages on console when no video output is available
+term-osd=true
+noterm-osd=false
+
+
+### ui
+## make mplayer quit when there is no file to play
+idle=false
+noidle=true
+## make mplayer window stay on top
+ontop=true
+noontop=false
+## use filename title
+use-filename-title=true
+nouse-filename-title=false
+## do not use filedir configuration file
+use-filedir-conf=false
+nouse-filedir-conf=true
+## enable borders
+noborder=false
+border=true
+## geometry : center window on screen
+geometry=50%:50%
+## when used with xinerama, -1 uses the display of the current window
+xineramascreen=-1
+## keep aspect ratio, and if window changes size nevertheless, fills remaining space with black bars. if set to false, resizes video to fill window
+keepaspect=true
+nokeepaspect=false
+## enable zoom
+zoom=true
+nozoom=false
+## set window class name (curiously enough, this sets WM_NAME first string, which xmonad recognizes as appName instead of className)
+name=mplayer2
+## do not loop by default (this can be overriden by a profile specific option or a --loop option)
+noloop=true
+## priority list of fullscreen modes (x11 only)
+#fstype=layer,stays_on_top,above,fullscreen
+## enable fixed vo (only one window for all files)
+fixed-vo=true
+nofixed-vo=false
+## disable forceful move of vo window on change
+noforce-window-position=true
+force-window-position=false
+## autohide mouse pointer
+cursor-autohide-delay=500
+## do not grab mouse pointer after a video mode change
+grabpointer=false
+nograbpointer=true
+## permit mplayer to receive pointer events as reported by vo driver (for selecting dvd menus, etc)
+mouse-movements=true
+nomouse-movements=false
+## enable console input
+consolecontrols=true
+noconsolecontrols=false
+## do not disable screensaver (I currently do not even have a screensaver daemon - I run it manually)
+stop-xscreensaver=false
+nostop-xscreensaver=true
+
+
+### events
+## key event fifo size (key input events buffer)
+key-fifo-size=16
+
+
+### caching / buffering
+# cache for playing movie with external audio
+audiofile-cache=256
+# stream cache
+cache=1024
+# play vs cache relations
+cache-min=5
+cache-seek-min=50
+# enable double buffering (drawing of next frame offline)
+double=true
+
+
+### network
+## disable cookies
+nocookies=true
+cookies=false
+## prefer ipv4
+prefer-ipv4=true
+prefer-ipv6=false
+## do not disable proxying for ipv6 (if enabled, connects to ipv6 addresses directly)
+ipv4-only-proxy=false
+## streaming video format choice (only default and best are _guaranteed_ to exist) (default value = best)
+quvi-format=best
+## allow other processes to reuse sockets as soon as they are closed
+reuse-socket=true
+noreuse-socket=false
+
+
+### device configuration
+# disable AppleIR remote support
+ar=false
+noar=true
+# disable LIRC support
+lirc=false
+nolirc=true
+# disable joystick support
+joystick=false
+nojoystick=true
+# disable mouse input support
+mouseinput=false
+nomouseinput=true
+
+
+### input configuration
+## autorepeat delay (currently only supported for joysticks)
+# delay in milliseconds before autorepeat kicks in
+input:ar-delay=500
+# number of keypresses to be generated per second on autorepeat mode
+input:ar-rate=10
+## disable default keybindings
+input:nodefault-bindings=true
+input:default-bindings=false
+## configuration file
+input:conf=input.conf
+### language configuration 
+# audio language priority (japanese -> english -> greek)
+alang=jpn,ja,jp,eng,en,ell,el,grk
+# subtitle language priority (english -> greek -> japanese)
+slang=eng,en,ell,el,grk,jpn,ja,jp
+### output drivers
+## audio drivers (for pulse setups use pulse,$ao)
+ao=alsa,portaudio,oss,
+## video drivers
+vo=xv,gl,x11,
+
+
+### audio
+## enable sound :)
+sound=true
+nosound=false
+## enable soft volume and set max volume amplification level
+nosoftvol=false
+softvol=true
+softvol-max=500
+## set volume step
+volstep=1
+## set startup volume (in percent of the total volume)
+volume=15
+## select type of mp2/mp3 stereo output
+stereo=0
+## enable audio/video syncing
+initial-audio-sync=true
+noinitial-audio-sync=false
+## enable gapless audio playing of consecutive audio files (may result in low sampling of consequent files)
+gapless-audio=true
+
+
+### video
+## enable video :)
+novideo=false
+## disable colorkey
+nocolorkey=true
+## enable soft framedrop (for slow systems) - might cause unwatchably choppy output
+framedrop=true
+noframedrop=false
+hardframedrop=false
+## disable soft sleep (repeatedly checks the cpu time to time frames - elevates cpu consumption)
+softsleep=false
+## enable support for matroska order chapters
+ordered-chapters=true
+noordered-chapters=false
+
+
+### subtitles
+## enable subtitles :)
+nosub=false
+## use ass
+ass=true
+noass=false
+## use embedded fonts
+embeddedfonts=true
+noembeddedfonts=false
+## font names
+# default font to use for osd and subtitles that do not specify a font
+#font='DejaVu Sans:style=Book'
+font='DejaVu Sans'
+# font to be used for subtitles
+subfont='DejaVu Sans'
+## subtitle font properties
+subfont-encoding=unicode
+subfont-autoscale=3
+#subfont-blur=2
+subfont-osd-scale=2.5
+#subfont-outline=2
+subfont-text-scale=4.5
+## subtitle style
+# border color
+ass-border-color=00000050
+ass-color=bcbcbc0f
+# margins
+ass-bottom-margin=0
+ass-top-margin=0
+ass-use-margins=true
+noass-use-margins=false
+# ass configuration
+ass-line-spacing=-1
+ass-styles=/home/ale1ster/.mplayer/ass.styles
+ass-hinting=3
+# ass filters
+ass-vsfilter-aspect-compat=false
+# antialiasing mode for vobsub - 4 uses swscalar gaussian blur
+spuaa=3
+#spugauss=1.0
+# alignment for vobsub
+spualign=-1
+## load subtitles matching the filename, and not only matching but also containing
+autosub=true
+noautosub=false
+sub-fuzziness=1
+## resample the font alphamap (?)
+ffactor=1
+## alpha channel value and color value for subtitle and osd backgrounds (completely transparent but grey) : currently they break my output rendering, but keep them handy
+#sub-bg-alpha=128
+#sub-bg-color=64
+
+
+
+### indexing
+# rebuilds index if no index was found
+idx=true
+noidx=false
+# force index rebuilding (useful for files with broken index) - this will allow seek on previously unseekable files
+forceidx=true
+
+
+
+
+
+
+
+
+### demux
+## disable extension based demux
+extbased=false
+noextbased=true
+
+
+
+#
+# MPlayer configuration file
+#
+# Configuration files are read system-wide from /usr/local/etc/mplayer.conf
+# and per-user from ~/.mplayer/config, where per-user settings override
+# system-wide settings, all of which are overrriden by the command line.
+#
+# The configuration file settings are the same as the command line
+# options without the preceding '-'.
+#
+# See the CONFIGURATION FILES section in the man page
+# for a detailed description of the syntax.
+#
+# Profiles should be placed at the bottom of the configuration file to ensure
+# that settings wanted as defaults are not restricted to specific profiles.
+
+
+##################
+# video settings #
+##################
+
+# Specify default video driver (see -vo help for a list).
+#vo=xv
+
+# Use SDL video with the aalib subdriver by default.
+#vo = sdl:aalib
+
+# FBdev driver:
+#
+# mode to use (read from fb.modes)
+#fbmode = 640x480-120
+#
+# location of the fb.modes file
+#fbmodeconfig = /etc/fb.modes
+
+# Specify your monitor timings for the vesa and fbdev video output drivers.
+# See /etc/X11/XF86Config for timings. Be careful; if you specify settings
+# that exceed the capabilities of your monitor, you may damage it.
+#
+# horizontal frequency range (k stands for 1000)
+#monitor-hfreq = 31.5k-50k,70k
+#
+# vertical frequency range
+#monitor-vfreq = 50-90
+#
+# dotclock (or pixelclock) range (m stands for 1000000)
+#monitor-dotclock = 30M-300M
+
+# Start in fullscreen mode by default.
+#fs=yes
+
+# Change to a different videomode when going fullscreen.
+#vm=yes
+
+# Override the autodetected color depth, may need 'vm=yes' as well.
+#bpp=0
+
+# Enable software scaling (powerful CPU needed) for video output
+# drivers that do not support hardware scaling.
+#zoom=yes
+
+# standard monitor size, with square pixels
+#monitoraspect=4:3
+
+# Use this for a widescreen monitor, non-square pixels.
+#monitoraspect=16:9
+
+# Keep the player window on top of all other windows.
+#ontop=yes
+
+
+##################
+# audio settings #
+##################
+
+# Specify default audio driver (see -ao help for a list).
+#ao=oss
+
+# Use SDL audio driver with the esd subdriver by default.
+#ao = sdl:esd
+
+# Specify the mixer device.
+#mixer = /dev/mixer
+
+# Resample the sound to 44100Hz with the lavcresample audio filter.
+#af=lavcresample=44100
+
+# Output audio to S/PDIF
+#ao=alsa:device=spdif
+#ac=hwac3,hwdts,hwmpa,
+
+
+##################
+# other settings #
+##################
+
+# Pretend to be Window Media Player.
+# Fixes playback when playlist and media file use the same URL.
+#user-agent=NSPlayer/4.1.0.3856
+
+# Pretend to be Quicktime
+# Fixes playback for apple.com/trailers redirects
+#user-agent="QuickTime"
+
+# Pretend to be Realplayer SP
+# Fixes playback for some video streaming sites
+#user-agent=RMA/1.0
+
+# Pretend to have lots of bandwidth
+# Speeds up realmedia rtsp:// streams
+#bandwidth=2000000
+
+# Pretend to be Winamp
+# Fixes playback of some NSV streams
+#user-agent="Winamp NSV Player/5.12 (ultravox/2.0)"
+
+# Drop frames to preserve audio/video sync.
+#framedrop = yes
+
+# Specify your preferred skin here (skins are searched for in
+# /usr/local/share/mplayer/skins/<name> and ~/.mplayer/skins/<name>).
+#skin = Abyss
+
+# Resample the font alphamap.
+# 0     plain white fonts
+# 0.75  very narrow black outline (default)
+# 1     narrow black outline
+# 10    bold black outline
+#ffactor = 0.75
+
+# cache settings
+#
+# Use 8MB input cache by default.
+#cache = 8192
+#
+# Prefill 20% of the cache before starting playback.
+#cache-min = 20.0
+#
+# Prefill 50% of the cache before restarting playback after the cache emptied.
+#cache-seek-min = 50
+
+# DVD: Display English subtitles if available.
+#slang = en
+
+# DVD: Play English audio tracks if available.
+#alang = en
+
+
+############
+# Profiles #
+############
+
+# The options declared as part of profiles override global default settings,
+# but only take effect when the profile is active.
+
+[protocol.dvdnav]
+#vc=ffmpeg12,
+#mouse-movements=yes
+#nocache=yes
+
+#[vo.vdpau]
+#vc=ffmpeg12vdpau,ffwmv3vdpau,ffvc1vdpau,ffh264vdpau,ffodivxvdpau,
+# Most video filters do not work with vdpau.
+#vf-clr=yes
+
+
+# OSD progress bar vertical alignment
+#progbar-align=50
+
+# You can also include other configuration files.
+#include = /path/to/the/file/you/want/to/include
