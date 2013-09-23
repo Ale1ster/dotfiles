@@ -7,7 +7,7 @@
 msgcolor=true
 nomsgcolor=false
 ## prepend module name to console messages (I like the default, but this is useful for debugging)
-msgmodule=true
+#msgmodule=true
 #nomsgmodule=false
 ## msglevels
 msglevel:cfgparser=4
@@ -208,8 +208,8 @@ softvol=true
 softvol-max=500
 ## set volume step
 volstep=1
-## set startup volume (in percent of the total volume)
-volume=15
+## set startup volume (in percent of the total volume) (-1 leaves it unchanged)
+volume=-1
 ## select type of mp2/mp3 stereo output
 stereo=0
 ## enable audio/video syncing

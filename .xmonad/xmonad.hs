@@ -124,7 +124,7 @@ fullLayout		=	named "O"  $ noBorders Full
 tabbedLayout	=	named ".." $ avoidStruts $ tabbed shrinkText myTabConfig
 imLayout		=	named "-|" $ avoidStruts $ reflectHoriz $ withIM (1%3) skypeRoster basicLayout
 	where
-		skypeRoster = (ClassName "Skype")  `And` (Not (Title "Options")) `And` (Not (Role "ConversationsWindow")) `And` (Not (Title "Add a Skype Contact"))
+		skypeRoster = (ClassName "Skype")  `And` (Not (Title "Options")) `And` (Not (Role "ConversationsWindow")) `And` (Not (Title "Add a Skype Contact")) `And` (Not (Title "File Transfers"))
 myBaseLayout	=	tallLayout ||| wideLayout ||| gridLayout ||| tabbedLayout ||| fullLayout
 myLayout		=	onWorkspace "0:im" ( imLayout ||| tallLayout ||| tabbedLayout ) $
 					onWorkspace "6:remote" ( tabbedLayout ||| fullLayout ||| tallLayout ) $
