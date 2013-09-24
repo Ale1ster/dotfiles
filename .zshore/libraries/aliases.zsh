@@ -54,6 +54,17 @@ alias lynx='lynx -cfg=~/.lynx.cfg'
 alias beautify_c='astyle --style=java --indent=force-tab=4 --add-brackets --indent-switches --indent-cases'
 # various
 alias rlwrap='rlwrap -Acr'
+# xclipboard (primary and clipboard) (copy, append, paster, clear, keep)
+alias pbc='xsel --input'
+alias pba='xsel --append'
+alias pbp='xsel --output'
+alias pbl='xsel --clear'
+alias pbk='xsel --keep'
+alias cbc='xsel --input --clipboard'
+alias cba='xsel --append --clipboard'
+alias cbp='xsel --output --clipboard'
+alias cbl='xsel --clear --clipboard'
+alias cbk='xsel --output --clipboard | xsel --input --clipboard'
 # images
 alias feh='feh --auto-zoom --fullscreen'
 # mplayer

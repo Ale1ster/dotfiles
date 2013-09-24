@@ -175,7 +175,7 @@ source $zshore_dir/libraries/completions.zsh
 
 export EDITOR="vim"
 export PAGER="less -R"
-export LESS="-isM"
+export LESS="-isCM"
 export MANPAGER="less"
 
 ## ==== ALIASES and FUNCTIONS ====
