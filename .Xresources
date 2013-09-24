@@ -1,4 +1,5 @@
 ! XTerm
+XTerm*termName:		xterm-256color
 XTerm*scrollBar:	false
 XTerm*background:	black
 XTerm*foreground:	white
@@ -7,7 +8,7 @@ XTerm*locale:		UTF-8
 XTerm*utf8:			2
 
 ! Urxvt
-URxvt*termName:		rxvt-unicode
+URxvt*termName:		rxvt-unicode-256color
 URxvt*scrollBar:	false
 URxvt*background:	black
 URxvt*foreground:	white
@@ -15,6 +16,7 @@ URxvt*cursorColor:	green
 URxvt*imLocale:		ja_JP.EUC-JP
 
 ! ATerm
+ATerm*termName:		aterm
 Aterm*scrollBar:	false
 Aterm*background:	black
 Aterm*foreground:	white

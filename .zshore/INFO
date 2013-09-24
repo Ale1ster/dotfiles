@@ -1,0 +1,4 @@
+libraries:
+	directory of zsh configurations to source
+plugins:
+	external plugins
