@@ -1,5 +1,6 @@
 *.swp
 *.ignore
+*.bak
 .ncmpcpp/error.log
 .zshore/TODO
 .zshore/.history
