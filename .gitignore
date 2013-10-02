@@ -5,5 +5,6 @@
 .zshore/TODO
 .zshore/.history
 .zshore/.internals
+.zshore/.tmux_base
 .zshore/others/
 .zshore/*.zwc

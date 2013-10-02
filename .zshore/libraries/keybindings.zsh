@@ -9,6 +9,9 @@ zmodload -i zsh/complist
 # Load terminfo module, so that terminfo db is available (for keybindings and application mode)
 zmodload -i zsh/terminfo
 
+# Load add-zsh-hook
+autoload -Uz add-zsh-hook
+
 # Change cursor color (in supporting terminals) to indicate mode (viins vs vicmd)
 # Switch the cursor to indicate current mode. Takes as sole argument the keymap we are switching to.
 function cursor_indicator_switch () {	
@@ -44,7 +47,7 @@ if (( $+terminfo[smkx] && $+terminfo[rmkx] )); then
 		zle -K viins
 		echoti rmkx
 	}
-	function zshexit () {
+	function zshexit_restore_cursor_mode () {
 		echoti rmkx
 		cursor_indicator_switch "viins"
 	}
@@ -55,11 +58,15 @@ else
 	function zle-line-finish () {
 		zle -K viins
 	}
-	function zshexit () {
+	function zshexit_restore_cursor_mode () {
 		# We need this for when a user exits the shell while in cmd mode. It resets the cursor.
 		cursor_indicator_switch "viins"
 	}
 fi
+#if [[ ${zshexit_functions[(r)zshexit_restore_cursor_mode]} != zshexit_restore_cursor_mode ]]; then
+#	zshexit_functions+=(zshexit_restore_cursor_mode)
+#fi
+add-zsh-hook zshexit zshexit_restore_cursor_mode
 # Executed upon keymap change
 function zle-keymap-select () {	cursor_indicator_switch $KEYMAP	}
 zle -N zle-keymap-select

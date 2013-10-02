@@ -66,6 +66,8 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 	, ((modMask .|. shiftMask, xK_space), sendMessage FirstLayout)
 	, ((modMask, xK_space), sendMessage NextLayout)
 	, ((modMask, xK_n), refresh)
+	, ((modMask .|. shiftMask, xK_Tab), windows W.focusUp)
+	, ((modMask, xK_Tab), windows W.focusDown)
 	, ((modMask, xK_k), windows W.focusUp)
 	, ((modMask, xK_j), windows W.focusDown)
 	, ((modMask, xK_m), windows W.focusMaster)

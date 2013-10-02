@@ -10,7 +10,7 @@ zshore_dir_opts=(AUTO_{CD,PUSHD} CHASE_LINKS PUSHD_{IGNORE_DUPS,MINUS,SILENT,TO_
 # Completion options
 zshore_compl_opts=(ALWAYS_{TO_END,LAST_PROMPT} AUTO_{LIST,MENU,NAME_DIRS,PARAM_KEYS,PARAM_SLASH,REMOVE_SLASH} COMPLETE_{ALIASES,IN_WORD} GLOB_COMPLETE HASH_LIST_ALL LIST_{AMBIGUOUS,PACKED,ROWS_FIRST})
 # Expansion/globbing options
-zshore_expans_opts=(BAD_PATTERN EQUALS GLOB_DOTS MARK_DIRS MULTIBYTE NOMATCH RC_EXPAND_PARAM RE_MATCH_PCRE UNSET)
+zshore_expans_opts=(BAD_PATTERN EQUALS EXTENDED_GLOB GLOB GLOB_DOTS MARK_DIRS MULTIBYTE NOMATCH RC_EXPAND_PARAM RE_MATCH_PCRE UNSET)
 # History options
 zshore_hist_opts=(EXTENDED_HISTORY HIST_{IGNORE_ALL_DUPS,IGNORE_DUPS,REDUCE_BLANKS,SAVE_BY_COPY,SAVE_NO_DUPS,VERIFY} INC_APPEND_HISTORY)
 # Initialization options
@@ -39,7 +39,7 @@ histchars="!^#"
 # History file and size
 HISTSIZE=100000
 SAVEHIST=100000
-HISTFILE="$zshore_dir/.history/zsh_history"		##TODO: Fix this for tmux history integration.
+HISTFILE="$zshore_dir/.history/zsh_history"
 # Size of possible matches before zsh asks 'do you want to see all possibilities'
 LISTMAX=200
 # Redirections without command, use NULLCMD (>) and READNULLCMD (<)
@@ -147,19 +147,12 @@ function current_branch() {
 PROMPT=$'%(?..[%?] )$(user_and_host_name)%F{green}%4~%f %B%F{black}%y%f%b $(parse_git_dirty_and_ahead)%B%(!.%F{red}#.%F{blue}>)%f%b'
 PROMPT2="%F{cyan}%_%f> "
 PROMPT3="%F{blue}yar choice%f %#"
-PROMPT4="+%F{red}%N%f:%F{green}%i%f> "
+PROMPT4="+%F{yellow}[%?]%f%F{red}%N%f:%F{green}%i%f> "
 # Right prompt variables (printed when the corresponding prompt is)
 RPROMPT=$'$(rprompt_char)%F{red}$(current_branch)%f$(git_prompt_status)'
 RPROMPT2="<"
 # Spelling correction prompt
 SPROMPT="zsh: didja mean '%r' (saw '%R')? [nyae] "
-
-# ==== ZCOMPILE ====
-
-# Compile zshrc if source is newer than the compiled file
-if [[ ! -f "$zshore_dir/.zshrc.zwc" ]] || [[ "$zshore_dir/.zshrc.swp" -ot "$zshore_dir/.zshrc" ]]; then
-	zcompile "$zshore_dir/.zshrc"
-fi
 
 # ==== KEYBINDINGS ====
 
@@ -195,7 +188,7 @@ source $zshore_dir/libraries/configurations.zsh
 ## ==== PLUGINS ====
 
 # Plugins
-#plugins=()
-#for i in $plugins; do
-#	source $zshore_dir/plugins/$i.zsh
-#done
+plugins=()
+for i in $plugins; do
+	source $zshore_dir/plugins/$i.zsh
+done

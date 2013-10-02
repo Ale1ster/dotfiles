@@ -1,0 +1,76 @@
+I want to enable session restoring of tmux.
+For this there are some requirements:
+	I only want to save named sessions.
+	I want to save all of the windows and panes in a session.
+	I want history and pwd to persist on a per-pane basis.
+Ideas:
+	Make zsh if we are running under a _named_ tmux session, and if so, redirect history to its proper histfile.
+	Schedule a zsh job to check if the session became named, and then properly redirect all pane's history to the respective histfiles.
+	Upon entering a session, check if the session is saved, and restore it (from zsh).
+	Schedule a job to save the directory stack.
+Steps:
+	Create variable from tmux (set-environment) and test for it from zshrc.
+
+::::::PROCEDURE::::::
+
+INVARIANTS:
+	Session directories are named after their session_id.
+	There are symlinks of the form 'ln -s session_id session_name'.
+	When a session is renamed, the procedure is 'if mkdir session_id.session_lock; then; ln -s session_name; rmdir session_id.session_lock; fi'.
+
+main:
+.If running inside tmux
+	If session is named
+		If we have a snapshot of it (check if there is a folder named after the session in manner id_name)
+			Restore it (by issuing tmux commands?? this will fuck up the interfacing of tmux and zsh: possibly add a new env variable for testing whether the shell is in tmux_restore_mode or not)
+			:: Such as: tmux_restoring="true"; tmux new-window -n "$WINDOW_NAME" -t "$SESSION_NAME:"
+			:::: This will be tested and prevent things from being messed up.
+		else
+			Create the proper folder (id_name) and the proper subfolders for windows and panes
+			Switch to the new stuff for history
+			Dump directory stack contents.
+.			Create a chpwd_functions trap for dumping each directory from the directory stack.
+		fi
+.	else
+.		schedule a callback to check if session became named
+.	fi
+.fi
+
+session became named callback:
+If session is named
+	If session directory exists
+		:: If we want to restore the session, create a lock under the directory folder.
+		::	Issue the proper tmux commands to restore the panes based on the contents of the directory named after the session.
+		:: fi
+		Switch context for us to use histfiles there.
+		Restore directory stack contents.
+		Add chpwd_functions trap for dumping directories in directory stack.
+	else
+		Create directories for window and pane.
+		Write histfile there.
+		Change histfile to the one there.
+		Dump directory stack contents.
+		Add chpwd_functions trap for dumping directories in dirstack.
+	fi
+else
+	schedule a callback to check if session became named
+fi
+
+::::::LAST THOUGHTS::::::
+
+# Restore session:
+	# Issue tmux commands to restore windows and panes in the session, after properly setting tmux_restore mode.
+
+# Track pane:
+	# Initial tracking actions (session/window/pane directory hierarchy, symlinking {session,window}name->ids).
+	# Change history file.
+	# Dump dirstack contents to file.
+	# Insert chpwd hook.
+	# Insert sanity hook (to check for pane tracking, because panes can change sessions and windows...).
+
+# Main:
+	# If we are running under tmux _and_ we pane is not in tmux_restore mode
+		# If the pane's session is numeric install schedule hook to check again.
+		# If the pane's session is named, and we have a snapshot folder, restore it.
+		# If the pane's session is named and we don't have a snapshot, track it.
+	# Else if we are running under tmux _and_ pane is in restore mode, track it, and unset tmux_restore mode.

@@ -2,7 +2,7 @@
 
 # shell
 alias resource='source ~/.zshenv && source $ZDOTDIR/.zshrc'
-alias shit='rehash'		# for when you just can't find a new program :)
+alias shit="zcompile \"${zshore_dir}/.zshrc\"; rehash"		# for when you just can't find a new program :)
 # lolzies
 alias wtf='dmesg'
 alias rtfm='man'
@@ -20,6 +20,10 @@ alias l='ls'
 alias la='ls -A'
 alias ll='ls -AlFh'
 alias sl='ls'
+# tree
+alias t='tree'
+alias ta='tree -aF --noreport'
+alias tap='tree -apF --noreport'
 # cd
 alias p='pushd'
 alias o='popd'
@@ -32,6 +36,7 @@ alias rf='rm -f'
 # vim
 alias v='vim'
 alias vi='vim'
+alias vd='vimdiff'
 # tmux
 alias tmux='tmux -2'
 # git
@@ -68,7 +73,7 @@ alias cbk='xsel --output --clipboard | xsel --input --clipboard'
 # images
 alias feh='feh --auto-zoom --fullscreen'
 # mplayer
-alias pvd='mplayer -name MPPlaylist -use-filename-title -loop 0 -fs'	# name is for workspace anchoring
+alias vp='mplayer -name MPPlaylist -use-filename-title -loop 0 -fs'	# name is for workspace anchoring
 # system
 alias _='sudo'
 alias oust='sudo pkill -u'
