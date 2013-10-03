@@ -188,7 +188,7 @@ source $zshore_dir/libraries/configurations.zsh
 ## ==== PLUGINS ====
 
 # Plugins
-plugins=()
+plugins=(tmux)
 for i in $plugins; do
 	source $zshore_dir/plugins/$i.zsh
 done
