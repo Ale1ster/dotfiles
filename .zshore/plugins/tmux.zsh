@@ -7,9 +7,22 @@ function tmux_get_pane_id ()			{ echo "${TMUX_PANE}" }
 function tmux_get_session_name ()		{ echo "$(tmux list-panes -F '#{session_name}' -t "${TMUX_PANE}" | head -n 1)" }
 function tmux_get_window_name ()		{ echo "$(tmux list-panes -F '#{window_name}' -t "${TMUX_PANE}" | head -n 1)" }
 function tmux_check_window_hardnamed ()	{ tmux show-window-options | grep --quiet "automatic-rename\soff" }
-function tmux_get_last_session_time ()	{ echo "$(tmux list-clients -F '#{client_created}' -t ${(Q)1})" }
-function tmux_get_last_restore_time ()	{ sed -n "/session restored/h; \${x;s/:session restored//;p}" "$1" }
-function tmux_set_last_restore_time ()	{ echo "$(date "+%s"):session restored" >> "$1" }
+function tmux_get_last_create_time ()	{ echo "$(tmux list-clients -F '#{client_created}' -t ${(Q)1})" }
+function tmux_get_last_restore_time ()	{ sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${1}" }
+
+# : Logging
+function tmux_log_restore_time ()	{ echo "$(date "+%s"):session restored" >> "$1" }
+function tmux_check_for_restore () {
+	# If there is a symlink to the session folder:
+	if [[ -h "$(find "${ZT_BASE_PATH}" -xtype d -name "${(Q)1}")" ]] ; then
+		# and the logfile does not exist _or_ the last restore time is before the session create time:
+		if [[ ! -f "${ZT_BASE_PATH}/${(Q)1}.log" ]] || [[ "$(tmux_get_last_create_time "${(q)1}")" -gt "$(tmux_get_last_restore_time "${(q)1}.log")" ]]; then
+			echo "restore criteria met"
+			return 0
+		fi
+	fi
+	return 1
+}
 
 # : Locking
 function tmux_lock_dir () {
@@ -37,7 +50,7 @@ function tmux_restore_session () {
 	local ZT_SESSION_NAME="$(tmux_get_session_name)"
 
 	tmux_lock_dir "${ZT_SESSION_ID}.restore_lock"
-#tmux_get_last_session_time "${ZT_SESSION_NAME}"
+#tmux_get_last_create_time "${ZT_SESSION_NAME}"
 #tmux_get_last_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_ID}.log"
 	# If there is a log of the session being restored after it has been logged as initiated, do not restore it.
 	# : This covers the scenario where more than one pane discover an untracked session and try to restore it.
@@ -158,7 +171,7 @@ function tmux_zshexit_hook () {
 	fi
 }
 
-functions -T tmux_schedule_named_session_check_callback tmux_track_pane tmux_chpwd_dump_hook tmux_lock_dir tmux_unlock_dir tmux_chpwd_dump_hook tmux_zshexit_hook tmux_restore_session
+functions -T tmux_schedule_named_session_check_callback tmux_track_pane tmux_chpwd_dump_hook tmux_lock_dir tmux_unlock_dir tmux_chpwd_dump_hook tmux_zshexit_hook tmux_restore_session tmux_log_restore_time tmux_check_for_restore
 
 # : Main
 typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
@@ -173,7 +186,7 @@ function {
 		else
 			# Session has snapshot:
 			#:TODO: There is something missing here. When a new pane is created, it finds the symlink and comes here...
-			if [[ -h "$(find "${ZT_BASE_PATH}" -xtype d -name "${ZT_SESSION_NAME}")" ]] ; then
+			if tmux_check_for_restore "${ZT_SESSION_NAME}"; then
 				case "$ZSH_TMUX_MODE" in
 					restore)
 						tmux_track_pane
