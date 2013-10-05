@@ -76,11 +76,12 @@ function tmux_track_pane () {
 	if [[ "$(readlink "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]]; then
 		echo "DEBUG: session symlink renamed"
 		tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
-		#TODO: Here I have to delete the old symlink and move the log.
-		find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec rm -f {} \+
-#		ZT_SESSION_NAME_OLD="$(find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' \;)"
-#		rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
-#		mv "${ZT_BASE_PATH}/{${ZT_SESSION_NAME_OLD}.log,${ZT_SESSION_NAME}.log}" 2>/dev/null
+#		find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec rm -f {} \+
+		local ZT_SESSION_NAME_OLD="$(find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' \;)"
+		if [[ -n "$ZT_SESSION_NAME_OLD" ]]; then
+			rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
+			mv "${ZT_BASE_PATH}/"{${(q)ZT_SESSION_NAME_OLD}.log,${(q)ZT_SESSION_NAME}.log} 2>/dev/null
+		fi
 		ln --symbolic "${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_NAME}"
 		tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 	fi
@@ -105,8 +106,11 @@ function tmux_track_pane () {
 		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; rmdir --parents "${ZT_WINPANE_OLD}"); then
 			find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -exec rm --force '{}' \+
 			if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID_OLD}"); then
-				find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec rm --force '{}' \+
-				#TODO: Add log file here too.
+				local ZT_SESSION_NAME_OLD="$(find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' \;)"
+				if [[ -n "$ZT_SESSION_NAME_OLD" ]]; then
+					rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
+					mv "${ZT_BASE_PATH}/"{${(q)ZT_SESSION_NAME_OLD}.log,${(q)ZT_SESSION_NAME}.log} 2>/dev/null
+				fi
 			fi
 		fi
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
@@ -146,8 +150,10 @@ function tmux_zshexit_hook () {
 	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; rmdir --parents "${ZT_WINPANE}"); then
 		find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -exec rm --force '{}' \+
 		if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID}"); then
-			find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec rm --force '{}' \+
-			#TODO: Add log file here too.
+			local ZT_SESSION_NAME="$(find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec basename '{}' \;)"
+			if [[ -n "$ZT_SESSION_NAME" ]]; then
+				rm --force "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}"{,.log}
+			fi
 		fi
 	fi
 }
@@ -189,7 +195,7 @@ function {
 	fi
 }
 #TODO: Remove all environment garbage here.
-unfunction tmux_track_pane
+#unfunction tmux_track_pane
 
 # Restore session:
 	# Issue tmux commands to restore windows and panes in the session, after properly setting tmux_restore mode.
