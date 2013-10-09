@@ -79,5 +79,5 @@ zstyle ':completion:*:(ssh|scp|rsync):*:hosts-ipaddr' ignored-patterns '^<->.<->
 # A single match in the _ignored completer will be displayed, but not inserted (possible: show, menu)
 zstyle '*' single-ignored show
 
-# Enable completion for pacmatic (essentially an alias for pacman)
+# Enable completion for pacmatic (essentially as an alias for pacman)
 compdef pacmatic='pacman'

@@ -1,126 +1,135 @@
 local ZT_BASE_PATH="${zshore_dir}/.tmux_base"
-
-# : Helper functions
-function tmux_get_session_id ()			{ echo "$(tmux list-panes -F '#{session_id}' -t "${TMUX_PANE}" | head -n 1)" }
-function tmux_get_window_id ()			{ echo "$(tmux list-panes -F '#{window_id}' -t "${TMUX_PANE}" | head -n 1)" }
-function tmux_get_pane_id ()			{ echo "${TMUX_PANE}" }
-function tmux_get_session_name ()		{ echo "$(tmux list-panes -F '#{session_name}' -t "${TMUX_PANE}" | head -n 1)" }
-function tmux_get_window_name ()		{ echo "$(tmux list-panes -F '#{window_name}' -t "${TMUX_PANE}" | head -n 1)" }
-function tmux_check_window_hardnamed ()	{ tmux show-window-options | grep --quiet "automatic-rename\soff" }
-function tmux_get_last_create_time ()	{ echo "$(tmux list-clients -F '#{client_created}' -t ${(Q)1})" }
-function tmux_get_last_restore_time ()	{ sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${1}" }
-
+# : Helpers
+function _zsh_tmux_get_session_id ()			{ echo "$(tmu\x list-panes -F '#{session_id}' -t "${TMUX_PANE}" | head -n 1)" }
+function _zsh_tmux_get_window_id ()				{ echo "$(tmu\x list-panes -F '#{window_id}' -t "${TMUX_PANE}" | head -n 1)" }
+function _zsh_tmux_get_pane_id ()				{ echo "${TMUX_PANE}" }
+function _zsh_tmux_get_session_name ()			{ echo "$(tmu\x list-panes -F '#{session_name}' -t "${TMUX_PANE}" | head -n 1)" }
+function _zsh_tmux_get_window_name ()			{ echo "$(tmu\x list-panes -F '#{window_name}' -t "${TMUX_PANE}" | head -n 1)" }
+function _zsh_tmux_check_window_hardnamed ()	{ tmu\x show-window-options | \grep --quiet "automatic-rename\soff" }
+function _zsh_tmux_get_last_create_time ()		{ echo "$(tmu\x list-clients -F '#{client_created}' -t ${(Q)1})" }
+function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${(Q)1}.log" }
+# : Locking
+function _zsh_tmux_lock_dir ()		{ until mkdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null; do; done }
+function _zsh_tmux_unlock_dir ()	{ rmdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null }
 # : Logging
-function tmux_log_restore_time ()	{ echo "$(date "+%s"):session restored" >> "$1" }
-function tmux_check_for_restore () {
+function _zsh_tmux_log_restore_time ()	{ echo "$(\date "+%s"):session restored" >> "${1}" }
+function _zsh_tmux_log_dummy_time ()	{ echo "$(tmu\x list-clients -F '#{client_created}' -t "${(Q)2}"):session restored" >> "${1}" }
+function _zsh_tmux_check_restore ()		{
 	# If there is a symlink to the session folder:
-	if [[ -h "$(find "${ZT_BASE_PATH}" -xtype d -name "${(Q)1}")" ]] ; then
+	if [[ -h "$(\find "${ZT_BASE_PATH}" -xtype d -name "${(Q)1}")" ]]; then
 		# and the logfile does not exist _or_ the last restore time is before the session create time:
-		if [[ ! -f "${ZT_BASE_PATH}/${(Q)1}.log" ]] || [[ "$(tmux_get_last_create_time "${(q)1}")" -gt "$(tmux_get_last_restore_time "${(q)1}.log")" ]]; then
+		if [[ "$(_zsh_tmux_get_last_create_time "${(q)1}")" -gt "$(_zsh_tmux_get_last_restore_time "${(q)1}")" ]]; then
 			echo "restore criteria met"
 			return 0
 		fi
 	fi
 	return 1
 }
-
-# : Locking
-function tmux_lock_dir () {
-	until mkdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null; do
-	done
-}
-function tmux_unlock_dir () {
-	rmdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null
-}
-
 # : Callbacks
-function tmux_schedule_named_session_check_callback () {
-	local ZT_SESSION_NAME="$(tmux_get_session_name)"
+function _zsh_tmux_sched_callback ()	{
+	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
+	# Numerical session:
 	if [[ "${ZT_SESSION_NAME}" =~ "^[[:digit:]]*$" ]]; then
-		sched +00:01:00 tmux_schedule_named_session_check_callback
+		sched +00:01:00 _zsh_tmux_sched_callback
+	# Named session:
 	else
-		tmux_track_pane
+		# Session needs restore:
+		if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
+			case "${ZSH_TMUX_MODE}" in
+				# Single panes under restore mode come here:
+				restore)
+					_zsh_tmux_track_pane
+					unset ZSH_TMUX_MODE
+					;;
+				# One pane executes restore successfully:
+				*)
+					_zsh_tmux_restore_session
+					;;
+			esac
+		# Session is tracked:
+		else
+			_zsh_tmux_track_pane
+		fi
 	fi
 }
-
-# : Restoring
-function tmux_restore_session () {
-	echo "Going for restore. This should be locked for single entry"
-	local ZT_SESSION_ID="$(tmux_get_session_id)"
-	local ZT_SESSION_NAME="$(tmux_get_session_name)"
-
-	tmux_lock_dir "${ZT_SESSION_ID}.restore_lock"
-#tmux_get_last_create_time "${ZT_SESSION_NAME}"
-#tmux_get_last_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_ID}.log"
-	# If there is a log of the session being restored after it has been logged as initiated, do not restore it.
-	# : This covers the scenario where more than one pane discover an untracked session and try to restore it.
-	if [[ -f "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log" ]]; then
-		
-	else
-		tmux_set_last_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log"
+# : Hooks
+function _zsh_tmux_chpwd_hook ()	{
+	if [[ "${PWD}" != "${OLDPWD}" ]]; then
+		print -lD "${PWD}" >> "${DIRSFILE}"
 	fi
-	tmux_unlock_dir "${ZT_SESSION_ID}.restore_lock"
-	# set ZSH_TMUX_MODE so that panes know they are in restore mode
-	#...
-	# Restore dirstack
-#	if [[ -f "${DIRSFILE}" ]]; then
-#		dirstack=( ${(f)"$(< "$DIRSFILE")"} )
-#		local last_dir="${dirstack[${#dirstack}]}"
-#		[[ -d "${last_dir}" ]] && cd "${last_dir}"
-#	fi
-	#...
 }
-
-# : Tracking
-function tmux_track_pane () {
-	local ZT_SESSION_ID="$(tmux_get_session_id)"
-	local ZT_WINDOW_ID="$(tmux_get_window_id)"
-	local ZT_PANE_ID="$(tmux_get_pane_id)"
-	local ZT_SESSION_NAME="$(tmux_get_session_name)"
-	local ZT_WINDOW_NAME="$(tmux_get_window_name)"
-	local ZSH_TMUX_PATH_OLD="$ZSH_TMUX_PATH"
+function _zsh_tmux_zshexit_hook ()	{
+	local ZT_SESSION_ID="${ZSH_TMUX_PATH%%/*/*}"
+	local ZT_WINPANE="${ZSH_TMUX_PATH#*/}"
+	local ZT_WINDOW_ID="${ZT_WINPANE%%/*}"
+	# Exiting a pane deletes it from tracking.
+	rm --force "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/"{histfile,dirsfile}(N)
+	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; rmdir --parents "${ZT_WINPANE}"); then
+		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
+		if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID}"); then
+			local ZT_SESSION_NAME="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec basename '{}' ';')"
+			if [[ -n "${ZT_SESSION_NAME}" ]]; then
+				rm --force "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}"{,.log}
+			fi
+		fi
+	fi
+}
+# : Restoring - Tracking
+function _zsh_tmux_track_pane ()		{
+	local ZT_SESSION_ID="$(_zsh_tmux_get_session_id)"
+	local ZT_WINDOW_ID="$(_zsh_tmux_get_window_id)"
+	local ZT_PANE_ID="$(_zsh_tmux_get_pane_id)"
+	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
+	local ZT_WINDOW_NAME="$(_zsh_tmux_get_window_name)"
+	local ZT_TMUX_PATH_OLD="${ZSH_TMUX_PATH}"
+	# Save the previous pane path (to check later) and create a new one.
 	ZSH_TMUX_PATH="${ZT_SESSION_ID}/${ZT_WINDOW_ID}/${ZT_PANE_ID}"
 	echo "DEBUG: new: ${ZSH_TMUX_PATH} vs old: ${ZSH_TMUX_PATH_OLD}"
 	# Create the proper directory hierarchy if it does not already exist.
 	if [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
 		mkdir --parents "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}" 2>/dev/null
 	fi
-	#If the name of the link to the session is not current, recreate it.
-	if [[ "$(readlink "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]]; then
+	# If the name of the session symlink is not current, recreate it.
+	if [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]]; then
 		echo "DEBUG: session symlink renamed"
-		tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
-#		find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec rm -f {} \+
-		local ZT_SESSION_NAME_OLD="$(find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' \;)"
-		if [[ -n "$ZT_SESSION_NAME_OLD" ]]; then
+		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
+#		\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -execdir rm --force '{}' '+'
+		local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' ';')"
+		if [[ -n "${ZT_SESSION_NAME_OLD}" ]]; then
 			rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
 			mv "${ZT_BASE_PATH}/"{${(q)ZT_SESSION_NAME_OLD}.log,${(q)ZT_SESSION_NAME}.log} 2>/dev/null
 		fi
-		ln --symbolic "${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_NAME}"
-		tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
+		\ln --symbolic "${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_NAME}"
+		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
+	fi
+	# Insert a dummy time to the session log, so that later panes will not try to restore (only in case of tracking without a restore).
+	if [[ -f "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}.log" ]] || [[ "$(_zsh_tmux_get_last_create_time "${(q)ZT_SESSION_NAME}")" -gt "$(_zsh_tmux_get_last_restore_time "${(q)ZT_SESSION_NAME}")" ]]; then
+		echo "DEBUG: restore criteria met"
+		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
+		_zsh_tmux_log_dummy_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log" "${ZT_SESSION_NAME}"
+		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 	fi
 	# If the window is hardnamed, create the appropriate symlink.
-	if tmux_check_window_hardnamed && [[ "$(readlink "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
+	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
 		echo "DEBUG: window symlink renamed"
 		tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
-		find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -exec rm --force '{}' \+
+		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
 		ln --symbolic "${ZT_WINDOW_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}"
 		tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	fi
-	# If the pane was previously being tracked, and it has changed tracking path, move its stuff to the new location and cleanup the old.
+	# If the pane was previously being tracked and it has changed tracking path, move its stuff to the new location and clean up the old.
 	if [[ -n "${ZSH_TMUX_PATH_OLD}" ]] && [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
 		echo "DEBUG: session/window/pane_path renamed"
-		mv "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/"{histfile,dirsfile}(N) "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/"
-
+		mv "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}"{histfile,dirsfile}(N) "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}"
 		local ZT_SESSION_ID_OLD="${ZSH_TMUX_PATH_OLD%%/*/*}"
 		local ZT_WINPANE_OLD="${ZSH_TMUX_PATH_OLD#*/}"
 		local ZT_WINDOW_ID_OLD="${ZT_WINPANE_OLD%%/*}"
-		
-		# Recursively delete pane, window and session directories if they are empty.
+		# Recursively delete pane, window and session directories (if they are empty).
 		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; rmdir --parents "${ZT_WINPANE_OLD}"); then
-			find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -exec rm --force '{}' \+
+			\find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -execdir rm --force '{}' '+'
 			if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID_OLD}"); then
-				local ZT_SESSION_NAME_OLD="$(find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' \;)"
-				if [[ -n "$ZT_SESSION_NAME_OLD" ]]; then
+				local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' ';')"
+				if [[ -n "${ZT_SESSION_NAME_OLD}" ]]; then
 					rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
 					mv "${ZT_BASE_PATH}/"{${(q)ZT_SESSION_NAME_OLD}.log,${(q)ZT_SESSION_NAME}.log} 2>/dev/null
 				fi
@@ -128,100 +137,69 @@ function tmux_track_pane () {
 		fi
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
 		DIRSFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/dirsfile"
-	# Else (initial entry), create the history and dirstack file.
+	# Else (initial entry), create the history and dirstack files.
 	elif [[ -z "${ZSH_TMUX_PATH_OLD}" ]]; then
-		echo "DEBUG: _normally_ initial tracking"
+		echo "DEBUG: _normally_, this is initial tracking"
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
 		DIRSFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/dirsfile"
-		print -lD ${PWD} ${(u)dirstack} > "${DIRSFILE}"
-		#if [[ ${chpwd_functions[(r)tmux_chpwd_dump_hook]} != tmux_chpwd_dump_hook ]]; then
-		#	chpwd_functions+=(tmux_chpwd_dump_hook)
+		print -lD ${PWD} ${(q)dirstack} > "${DIRSFILE}"
+		#if [[ ${chpwd_functions[(r)_zsh_tmux_chpwd_hook]} != _zsh_tmux_chpwd_hook ]]; then
+		#	chpwd_functions+=(_zsh_tmux_chpwd_hook)
 		#fi
-		add-zsh-hook chpwd tmux_chpwd_dump_hook
-		#if [[ ${zshexit_functions[(r)tmux_zshexit_hook]} != tmux_zshexit_hook ]]; then
-		#	zshexit_functions+=(tmux_zshexit_hook)
+		add-zsh-hook chpwd _zsh_tmux_chpwd_hook
+		#if [[ ${zshexit_functions[(r)_zsh_tmux_zshexit_hook]} != _zsh_tmux_zshexit_hook ]]; then
+		#	zshexit_functions+=(_zsh_tmux_zshexit_hook)
 		#fi
-		add-zsh-hook zshexit tmux_zshexit_hook
+		#>>TODO: This is called even when we kill the session. I don't know if I want that...
+#		add-zsh-hook zshexit _zsh_tmux_zshexit_hook
+		#<<TODO
 	fi
 	echo "DEBUG: reschedule"
-	sched +00:01:00 tmux_track_pane
+	sched +00:01:00 _zsh_tmux_track_pane
 }
+function _zsh_tmux_restore_session ()	{
+	#TODO: ...
+	echo "Going for restore. This should be locked against multiple entry."
+	local ZT_SESSION_ID="$(_zsh_tmux_get_session_id)"
+	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
 
-# : Hooks
-function tmux_chpwd_dump_hook () {
-	if [[ "${PWD}" != "${OLDPWD}" ]]; then
-		print -lD ${PWD} >> "${DIRSFILE}"
+	#_zsh_tmux_lock_dir "${ZT_SESSION_ID}.lock"
+	_zsh_tmux_lock_dir "${ZT_SESSION_ID}.restore_lock"
+	# If there is a log of the session being restored after it has been logged as initiated, do not restore it.
+	# : This covers the scenario where more than one pane discover they are running under an untracked session and try to restore it.
+	if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
+		echo "DEBUG: restoring"
+		# Set ZSH_TMUX_MODE to restore, so that panes know they are in restore mode.
+		ZSH_TMUX_MODE="restore"
+		#...
+		
+#	# Restore dirstack (This should be done in track_pane (only during the first time), by checking if ZSH_TMUX_MODE is set).
+#	if [[ -f "${DIRSFILE}" ]]; then
+#		dirstack=( ${(f)"$(< "$DIRSFILE")"} )
+#		local last_dir="${dirstack[${#dirstack}]}"
+#		[[ -d "${last_dir}" ]] && cd "${last_dir}"
+#	fi
+		
+		#...
+		# Log restore time.
+		_zsh_tmux_log_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log"
 	fi
+	_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.restore_lock"
+	#_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.lock"
+	#TODO: ...
 }
-function tmux_zshexit_hook () {
-	local ZT_SESSION_ID="${ZSH_TMUX_PATH%%/*/*}"
-	local ZT_WINPANE="${ZSH_TMUX_PATH#*/}"
-	local ZT_WINDOW_ID="${ZT_WINPANE%%/*}"
-
-	# Exiting a pane deletes it from tracking.
-	rm --force "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/"{histfile,dirsfile}(N)
-	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; rmdir --parents "${ZT_WINPANE}"); then
-		find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -exec rm --force '{}' \+
-		if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID}"); then
-			local ZT_SESSION_NAME="$(find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec basename '{}' \;)"
-			if [[ -n "$ZT_SESSION_NAME" ]]; then
-				rm --force "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}"{,.log}
-			fi
-		fi
-	fi
-}
-
-functions -T tmux_schedule_named_session_check_callback tmux_track_pane tmux_chpwd_dump_hook tmux_lock_dir tmux_unlock_dir tmux_chpwd_dump_hook tmux_zshexit_hook tmux_restore_session tmux_log_restore_time tmux_check_for_restore
-
+#DEBUGGING
+functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
 # : Main
+#Make these env variables uninheritable to subprocesses.
 typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
 function {
 	# Inside tmux:
-	if [[ "$ZSH_TMUX_INSIDE" = "true" ]]; then
-		local ZT_SESSION_NAME="$(tmux_get_session_name)"
-		# Numerical session:
-		if [[ "${ZT_SESSION_NAME}" =~ "^[[:digit:]]*$" ]]; then
-			tmux_schedule_named_session_check_callback
-		# Named session:
-		else
-			# Session has snapshot:
-			#:TODO: There is something missing here. When a new pane is created, it finds the symlink and comes here...
-			if tmux_check_for_restore "${ZT_SESSION_NAME}"; then
-				case "$ZSH_TMUX_MODE" in
-					restore)
-						tmux_track_pane
-						unset ZSH_TMUX_MODE
-						;;
-					*)
-						tmux_restore_session
-						;;
-				esac
-			# Session has no snapshot:
-			else
-				tmux_track_pane
-			fi
-		fi
+	if [[ "${ZSH_TMUX_INSIDE}" = "true" ]]; then
+		_zsh_tmux_sched_callback
 	# Outside tmux:
 	else
-		add-zsh-hook -d chpwd tmux_chpwd_dump_hook
-		add-zsh-hook -d zshexit tmux_zshexit_hook
+		add-zsh-hook -d chpwd _zsh_tmux_chpwd_hook
+		add-zsh-hook -d zshexit _zsh_tmux_zshexit_hook
 	fi
 }
-#TODO: Remove all environment garbage here.
-#unfunction tmux_track_pane
-
-# Restore session:
-	# Issue tmux commands to restore windows and panes in the session, after properly setting tmux_restore mode.
-# Track pane:
-	# Initial tracking actions (session/window/pane directory hierarchy, symlinking {session,window}name->ids).
-	# Change history file.
-	# Dump dirstack contents to file.
-	# Insert chpwd hook.
-	# Insert sanity hook (to check for pane tracking, because panes can change sessions and windows...).
-# Main:
-	# If we are running under tmux _and_ we pane is not in tmux_restore mode
-		# If the pane's session is numeric install schedule hook to check again.
-		# If the pane's session is named, and we have a snapshot folder, restore it.
-		# If the pane's session is named and we don't have a snapshot, track it.
-	# Else if we are running under tmux _and_ pane is in restore mode
-		# Track it, and unset tmux_restore mode.
