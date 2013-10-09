@@ -93,7 +93,7 @@ function _zsh_tmux_track_pane ()		{
 	if [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]]; then
 		echo "DEBUG: session symlink renamed"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
-#		\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -execdir rm --force '{}' '+'
+		#\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -execdir rm --force '{}' '+'
 		local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' ';')"
 		if [[ -n "${ZT_SESSION_NAME_OLD}" ]]; then
 			rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
