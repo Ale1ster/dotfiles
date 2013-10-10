@@ -39,7 +39,7 @@ function _zsh_tmux_sched_callback ()	{
 				# Single panes under restore mode come here:
 				restore)
 					_zsh_tmux_track_pane
-					unset ZSH_TMUX_MODE
+					#unset ZSH_TMUX_MODE
 					;;
 				# One pane executes restore successfully:
 				*)
@@ -50,6 +50,7 @@ function _zsh_tmux_sched_callback ()	{
 		else
 			_zsh_tmux_track_pane
 		fi
+		unset ZSH_TMUX_MODE
 	fi
 }
 # : Hooks
@@ -104,7 +105,7 @@ function _zsh_tmux_track_pane ()		{
 	fi
 	# Insert a dummy time to the session log, so that later panes will not try to restore (only in case of tracking without a restore).
 	if [[ -f "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}.log" ]] || [[ "$(_zsh_tmux_get_last_create_time "${(q)ZT_SESSION_NAME}")" -gt "$(_zsh_tmux_get_last_restore_time "${(q)ZT_SESSION_NAME}")" ]]; then
-		echo "DEBUG: restore criteria met"
+		echo "DEBUG: debug restore criteria met"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
 		_zsh_tmux_log_dummy_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log" "${ZT_SESSION_NAME}"
 		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
@@ -137,6 +138,14 @@ function _zsh_tmux_track_pane ()		{
 		fi
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
 		DIRSFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/dirsfile"
+		# Restore dirstack. This should happen only once when we restore a pane. That's why we check for ZSH_TMUX_MODE.
+		if [[ -n "${ZSH_TMUX_MODE}" ]]; then
+			if [[ -f "${DIRSFILE}" ]]; then
+				dirstack=( ${(f)"$(< "${DIRSFILE}")"} )
+				local last_dir="${dirstack[${#dirstack}]}"
+				[[ -d "${last_dir}" ]] && cd "${last_dir}"
+			fi
+		fi
 	# Else (initial entry), create the history and dirstack files.
 	elif [[ -z "${ZSH_TMUX_PATH_OLD}" ]]; then
 		echo "DEBUG: _normally_, this is initial tracking"
@@ -158,41 +167,35 @@ function _zsh_tmux_track_pane ()		{
 	sched +00:01:00 _zsh_tmux_track_pane
 }
 function _zsh_tmux_restore_session ()	{
-	#TODO: ...
 	echo "Going for restore. This should be locked against multiple entry."
 	local ZT_SESSION_ID="$(_zsh_tmux_get_session_id)"
 	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
-
 	#_zsh_tmux_lock_dir "${ZT_SESSION_ID}.lock"
 	_zsh_tmux_lock_dir "${ZT_SESSION_ID}.restore_lock"
 	# If there is a log of the session being restored after it has been logged as initiated, do not restore it.
 	# : This covers the scenario where more than one pane discover they are running under an untracked session and try to restore it.
 	if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
-		echo "DEBUG: restoring"
+		echo "restoring"
 		# Set ZSH_TMUX_MODE to restore, so that panes know they are in restore mode.
 		ZSH_TMUX_MODE="restore"
 		#...
-		
-#	# Restore dirstack (This should be done in track_pane (only during the first time), by checking if ZSH_TMUX_MODE is set).
-#	if [[ -f "${DIRSFILE}" ]]; then
-#		dirstack=( ${(f)"$(< "$DIRSFILE")"} )
-#		local last_dir="${dirstack[${#dirstack}]}"
-#		[[ -d "${last_dir}" ]] && cd "${last_dir}"
-#	fi
+		#TODO: For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
 		
 		#...
 		# Log restore time.
 		_zsh_tmux_log_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log"
+		# Reset restore mode.
+		unset ZSH_TMUX_MODE
 	fi
 	_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.restore_lock"
 	#_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.lock"
-	#TODO: ...
 }
 #DEBUGGING
 functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
 # : Main
 #Make these env variables uninheritable to subprocesses.
-typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
+#typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
+typeset +gx ZSH_TMUX_INSIDE
 function {
 	# Inside tmux:
 	if [[ "${ZSH_TMUX_INSIDE}" = "true" ]]; then
