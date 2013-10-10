@@ -113,10 +113,10 @@ function _zsh_tmux_track_pane ()		{
 	# If the window is hardnamed, create the appropriate symlink.
 	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
 		echo "DEBUG: window symlink renamed"
-		tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
+		_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
 		ln --symbolic "${ZT_WINDOW_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}"
-		tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
+		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	fi
 	# If the pane was previously being tracked and it has changed tracking path, move its stuff to the new location and clean up the old.
 	if [[ -n "${ZSH_TMUX_PATH_OLD}" ]] && [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
@@ -178,9 +178,21 @@ function _zsh_tmux_restore_session ()	{
 		echo "restoring"
 		# Set ZSH_TMUX_MODE to restore, so that panes know they are in restore mode.
 		ZSH_TMUX_MODE="restore"
+		# Rename the session_id directory to the new session id.
+		#TODO: recreate...
 		#...
 		#TODO: For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
-		
+		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
+		for windows_i in *(/); do
+			pushd -q "${windows_i}"
+			#...
+			for pane_i in *(/); do
+				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
+				#...
+			done
+			popd -q
+		done
+		popd -q
 		#...
 		# Log restore time.
 		_zsh_tmux_log_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log"
