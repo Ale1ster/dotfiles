@@ -181,7 +181,7 @@ function _zsh_tmux_restore_session ()	{
 		# Rename the session_id directory to the new session id.
 		#TODO: recreate...
 		#...
-		#TODO: For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
+		#For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
 		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
 		for windows_i in *(/); do
 			pushd -q "${windows_i}"
