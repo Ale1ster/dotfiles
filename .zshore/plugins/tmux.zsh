@@ -115,7 +115,7 @@ function _zsh_tmux_track_pane ()		{
 		echo "DEBUG: window symlink renamed"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
-		ln --symbolic "${ZT_WINDOW_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}"
+		\ln --symbolic "${ZT_WINDOW_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}"
 		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	fi
 	# If the pane was previously being tracked and it has changed tracking path, move its stuff to the new location and clean up the old.
@@ -179,17 +179,27 @@ function _zsh_tmux_restore_session ()	{
 		# Set ZSH_TMUX_MODE to restore, so that panes know they are in restore mode.
 		ZSH_TMUX_MODE="restore"
 		# Rename the session_id directory to the new session id.
-		#TODO: recreate...
-		#...
+		local ZT_SESSION_ID_OLD="$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")"
+		if [[ "${ZT_SESSION_ID_OLD}" != "${ZT_SESSION_ID}" ]]; then
+			_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
+			mv "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
+			\ln --symbolic --no-dereference --force "${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_NAME}"
+			_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
+		fi
 		#For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
 		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
-		for windows_i in *(/); do
+		#TODO: Why doesn't assigning the result of splitting the directory globbing to a variable work?
+#		local windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
+		for windows_i in "${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"}"; do
 			pushd -q "${windows_i}"
+			# Make a list of the windows panes.
+##			local panes_list=(${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"})
 			#...
-			for pane_i in *(/); do
-				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
+#			for pane_i in ${panes_list}; do
+#				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
 				#...
-			done
+#			done
+			#TODO: Hash can be calculated with a script with "tcc -run" hashbang.
 			popd -q
 		done
 		popd -q
