@@ -186,24 +186,30 @@ function _zsh_tmux_restore_session ()	{
 			\ln --symbolic --no-dereference --force "${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_NAME}"
 			_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 		fi
-		#For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
+		# Save the restorer's zsh_tmux_path, and restore it after the loop.
+		local ZSH_TMUX_PATH_SAVED="${ZSH_TMUX_PATH}"
+		# For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
 		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
-		#TODO: Why doesn't assigning the result of splitting the directory globbing to a variable work?
-#		local windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
-		for windows_i in "${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"}"; do
-			pushd -q "${windows_i}"
+		# Why doesn't assigning the result of splitting the directory globbing to a variable work?
+		#local windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
+		for window_i in ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"}; do
+			pushd -q "${window_i}"
 			# Make a list of the windows panes.
-##			local panes_list=(${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"})
 			#...
-#			for pane_i in ${panes_list}; do
-#				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
+			#local panes_list=(${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"})
+			for pane_i in ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"}; do
+				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
+				echo "${ZSH_TMUX_PATH}"
 				#...
-#			done
-			#TODO: Hash can be calculated with a script with "tcc -run" hashbang.
+			done
+			# TODO: Hash can be calculated with a script with "tcc -run" hashbang.
+			#...
 			popd -q
 		done
 		popd -q
 		#...
+		# Restore zsh_tmux_path (in case it is set).
+		ZSH_TMUX_PATH="${ZSH_TMUX_PATH_SAVED}"
 		# Log restore time.
 		_zsh_tmux_log_restore_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log"
 		# Reset restore mode.
