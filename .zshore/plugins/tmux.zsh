@@ -190,30 +190,29 @@ function _zsh_tmux_restore_session ()	{
 		local ZSH_TMUX_PATH_SAVED="${ZSH_TMUX_PATH}"
 		# For each window, for each pane, set ZSH_TMUX_PATH to the proper value (which will be inherited and handled in the child shell's ZSH_TMUX_PATH_OLD handling in _zsh_tmux_track_pane), and issue the proper tmux commands  to spawn them.
 		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
-		# Why doesn't assigning the result of splitting the directory globbing to a variable work?
-		#local windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
-		for window_i in ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"}; do
+		typeset -a windows_list; windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
+		for window_i in ${windows_list}; do
 			pushd -q "${window_i}"
 			# Find the window name through the symlink pointing to the window folder.
 			local ZT_WINDOW_NAME="$(\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${window_i}" -exec basename '{}' ';')"
 			local ZT_WINDOW_ID
 			typeset -a ZT_PANE_LIST; ZT_PANE_LIST=()
 			local ZT_PANE_LOOP_I="first"
-			#local panes_list=(${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"})
+			typeset -a panes_list; panes_list=( ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"} )
 			# Restore each pane. At this time, there may be problems with the number of panes that can be launched before the layout restore, due to the size restriction in panes.
-			for pane_i in ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"}; do
+			for pane_i in ${panes_list}; do
 				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
 				# If this is the first loop over the panes, spawn a window. This is needed because new-window spawns a pane, and we want it to be restored too, so ZSH_TMUX_PATH must be set...
 				if [[ "${ZT_PANE_LOOP_I}" = "first" ]]; then
 					# Create the tmux window.
-					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_index}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}")"
-					ZT_PANE_LIST+=${ZT_WINDOW_ID##*:}
-					ZT_WINDOW_ID=${ZT_WINDOW_ID%:[[:digit:]](#c1,)}
+					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_id}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}")"
+					ZT_PANE_LIST+=${ZT_WINDOW_ID##*:%}
+					ZT_WINDOW_ID=${ZT_WINDOW_ID%:%[[:digit:]](#c1,)}
 					# Unset the first loop indicator.
 					ZT_PANE_LOOP_I=""
 				# All other loops split the window.
 				else
-					ZT_PANE_LIST+="$(tmu\x split-window -d -PF '#{pane_index}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}")"
+					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}")#%}"
 				fi
 			done
 			# TODO: Hash can be calculated with a script with "tcc -run" hashbang.
