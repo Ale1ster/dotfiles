@@ -10,7 +10,7 @@ function _zsh_tmux_get_last_create_time ()		{ echo "$(tmu\x list-clients -F '#{c
 function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${(Q)1}.log" }
 # : Locking
 function _zsh_tmux_lock_dir ()		{ until mkdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null; do; done }
-function _zsh_tmux_unlock_dir ()	{ rmdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null }
+function _zsh_tmux_unlock_dir ()	{ r\mdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null }
 # : Logging
 function _zsh_tmux_log_restore_time ()	{ echo "$(\date "+%s"):session restored" >> "${1}" }
 function _zsh_tmux_log_dummy_time ()	{ echo "$(tmu\x list-clients -F '#{client_created}' -t "${(Q)2}"):session restored" >> "${1}" }
@@ -65,9 +65,9 @@ function _zsh_tmux_zshexit_hook ()	{
 	local ZT_WINDOW_ID="${ZT_WINPANE%%/*}"
 	# Exiting a pane deletes it from tracking.
 	rm --force "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/"{histfile,dirsfile}(N)
-	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; rmdir --parents "${ZT_WINPANE}"); then
+	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; r\mdir --parents "${ZT_WINPANE}" 2>/dev/null); then
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
-		if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID}"); then
+		if (pushd -q "${ZT_BASE_PATH}"; r\mdir --parents "${ZT_SESSION_ID}" 2>/dev/null); then
 			local ZT_SESSION_NAME="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec basename '{}' ';')"
 			if [[ -n "${ZT_SESSION_NAME}" ]]; then
 				rm --force "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}"{,.log}
@@ -82,7 +82,7 @@ function _zsh_tmux_track_pane ()		{
 	local ZT_PANE_ID="$(_zsh_tmux_get_pane_id)"
 	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
 	local ZT_WINDOW_NAME="$(_zsh_tmux_get_window_name)"
-	local ZT_TMUX_PATH_OLD="${ZSH_TMUX_PATH}"
+	local ZSH_TMUX_PATH_OLD="${ZSH_TMUX_PATH}"
 	# Save the previous pane path (to check later) and create a new one.
 	ZSH_TMUX_PATH="${ZT_SESSION_ID}/${ZT_WINDOW_ID}/${ZT_PANE_ID}"
 	echo "DEBUG: new: ${ZSH_TMUX_PATH} vs old: ${ZSH_TMUX_PATH_OLD}"
@@ -121,14 +121,16 @@ function _zsh_tmux_track_pane ()		{
 	# If the pane was previously being tracked and it has changed tracking path, move its stuff to the new location and clean up the old.
 	if [[ -n "${ZSH_TMUX_PATH_OLD}" ]] && [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
 		echo "DEBUG: session/window/pane_path renamed"
-		mv "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}"{histfile,dirsfile}(N) "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}"
+		if [[ -f "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/histfile" ]] || [[ -f "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/dirsfile" ]]; then
+			mv "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/"{histfile,dirsfile}(N) "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}"
+		fi
 		local ZT_SESSION_ID_OLD="${ZSH_TMUX_PATH_OLD%%/*/*}"
 		local ZT_WINPANE_OLD="${ZSH_TMUX_PATH_OLD#*/}"
 		local ZT_WINDOW_ID_OLD="${ZT_WINPANE_OLD%%/*}"
 		# Recursively delete pane, window and session directories (if they are empty).
-		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; rmdir --parents "${ZT_WINPANE_OLD}"); then
+		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; r\mdir --parents "${ZT_WINPANE_OLD}" 2>/dev/null); then
 			\find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -execdir rm --force '{}' '+'
-			if (pushd -q "${ZT_BASE_PATH}"; rmdir --parents "${ZT_SESSION_ID_OLD}"); then
+			if (pushd -q "${ZT_BASE_PATH}"; r\mdir --parents "${ZT_SESSION_ID_OLD}" 2>/dev/null); then
 				local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' ';')"
 				if [[ -n "${ZT_SESSION_NAME_OLD}" ]]; then
 					rm --force "${ZT_BASE_PATH}/${ZT_SESSION_NAME_OLD}"
@@ -200,18 +202,14 @@ function _zsh_tmux_restore_session ()	{
 			typeset -a panes_list; panes_list=( ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"} )
 			# Restore each pane. At this time, there may be problems with the number of panes that can be launched before the layout restore, due to the size restriction in panes.
 			for pane_i in ${panes_list}; do
-#				ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
 				# If this is the first loop over the panes, spawn a window. This is needed because new-window spawns a pane, and we want it to be restored too, so ZSH_TMUX_PATH must be set...
 				if [[ "${pane_i}" = "${panes_list[1]}" ]]; then
-					ZSH_TMUX_PATH="${ZT_SESSION_ID}/${window_i}/${pane_i}"
-					# Create the tmux window.
-					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_id}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}")"
+					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_id}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" zsh")"
 					ZT_PANE_LIST+=${ZT_WINDOW_ID##*:%}
 					ZT_WINDOW_ID=${ZT_WINDOW_ID%:%[[:digit:]](#c1,)}
-					# Unset the first loop indicator.
 				# All other loops split the window.
 				else
-					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}")#%}"
+					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" zsh")#%}"
 				fi
 			done
 			# TODO: Hash can be calculated with a script with "tcc -run" hashbang.

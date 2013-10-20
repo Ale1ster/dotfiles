@@ -147,7 +147,7 @@ function current_branch() {
 PROMPT=$'%(?..[%?] )$(user_and_host_name)%F{green}%4~%f %B%F{black}%y%f%b $(parse_git_dirty_and_ahead)%B%(!.%F{red}#.%F{blue}>)%f%b'
 PROMPT2="%F{cyan}%_%f> "
 PROMPT3="%F{blue}yar choice%f %#"
-PROMPT4="+%F{yellow}[%?]%f%F{red}%N%f:%F{green}%i%f> "
+PROMPT4="+%F{yellow}[%?]%f%F{red}%N%f:%F{green}%i%f_%F{green}(%I)%f> "
 # Right prompt variables (printed when the corresponding prompt is)
 RPROMPT=$'$(rprompt_char)%F{red}$(current_branch)%f$(git_prompt_status)'
 RPROMPT2="<"
