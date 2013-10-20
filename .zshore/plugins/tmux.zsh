@@ -145,7 +145,11 @@ function _zsh_tmux_track_pane ()		{
 			if [[ -f "${DIRSFILE}" ]]; then
 				dirstack=( ${(f)"$(< "${DIRSFILE}")"} )
 				local last_dir=${~dirstack[${#dirstack}]}
-				[[ -d "${last_dir}" ]] && cd "${last_dir}"
+				if [[ -d "${last_dir}" ]]; then
+					cd "${last_dir}"
+				else
+					cd "${HOME}"
+				fi
 			fi
 		fi
 	# Else (initial entry), create the history and dirstack files.
@@ -178,6 +182,13 @@ function _zsh_tmux_restore_session ()	{
 	# : This covers the scenario where more than one pane discover they are running under an untracked session and try to restore it.
 	if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
 		echo "restoring"
+		# Backup any possible session directory that has the current session id and replace the symlink pointing to it.
+		if [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]] && [[ -d "${ZT_BASE_PATH}/${ZT_SESSION_ID}" ]]; then
+			_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
+			mv "${ZT_BASE_PATH}/${ZT_SESSION_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}_stash"
+			\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -execdir ln --symbolic --no-dereference --force "${ZT_SESSION_ID}_stash" '{}' ';'
+			_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
+		fi
 		# Rename the session_id directory to the new session id.
 		local ZT_SESSION_ID_OLD="$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")"
 		if [[ "${ZT_SESSION_ID_OLD}" != "${ZT_SESSION_ID}" ]]; then
