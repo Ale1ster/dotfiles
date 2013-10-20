@@ -144,7 +144,7 @@ function _zsh_tmux_track_pane ()		{
 		if [[ -n "${ZSH_TMUX_MODE}" ]]; then
 			if [[ -f "${DIRSFILE}" ]]; then
 				dirstack=( ${(f)"$(< "${DIRSFILE}")"} )
-				local last_dir="${dirstack[${#dirstack}]}"
+				local last_dir=${~dirstack[${#dirstack}]}
 				[[ -d "${last_dir}" ]] && cd "${last_dir}"
 			fi
 		fi
@@ -178,8 +178,6 @@ function _zsh_tmux_restore_session ()	{
 	# : This covers the scenario where more than one pane discover they are running under an untracked session and try to restore it.
 	if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
 		echo "restoring"
-		# Set ZSH_TMUX_MODE to restore, so that panes know they are in restore mode.
-		ZSH_TMUX_MODE="restore"
 		# Rename the session_id directory to the new session id.
 		local ZT_SESSION_ID_OLD="$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")"
 		if [[ "${ZT_SESSION_ID_OLD}" != "${ZT_SESSION_ID}" ]]; then
@@ -202,14 +200,15 @@ function _zsh_tmux_restore_session ()	{
 			typeset -a panes_list; panes_list=( ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"} )
 			# Restore each pane. At this time, there may be problems with the number of panes that can be launched before the layout restore, due to the size restriction in panes.
 			for pane_i in ${panes_list}; do
-				# If this is the first loop over the panes, spawn a window. This is needed because new-window spawns a pane, and we want it to be restored too, so ZSH_TMUX_PATH must be set...
+				# If this is the first loop over the panes, spawn a window. This is needed because new-window spawns a pane, and we want it to be restored too (as the first pane).
+				# : Spawn zsh in an environment with ZSH_TMUX_PATH (pointing to the previous path) and ZSH_TMUX_MODE (indicating restore mode) set.
 				if [[ "${pane_i}" = "${panes_list[1]}" ]]; then
-					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_id}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" zsh")"
+					ZT_WINDOW_ID="$(tmu\x new-window -d -PF '#{window_id}:#{pane_id}' ${ZT_WINDOW_NAME:+"-n ${ZT_WINDOW_NAME}"} -t "${ZT_SESSION_NAME}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" ZSH_TMUX_MODE="restore" zsh")"
 					ZT_PANE_LIST+=${ZT_WINDOW_ID##*:%}
 					ZT_WINDOW_ID=${ZT_WINDOW_ID%:%[[:digit:]](#c1,)}
 				# All other loops split the window.
 				else
-					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" zsh")#%}"
+					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" ZSH_TMUX_MODE="restore" zsh")#%}"
 				fi
 			done
 			# TODO: Hash can be calculated with a script with "tcc -run" hashbang.
@@ -231,8 +230,7 @@ function _zsh_tmux_restore_session ()	{
 functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
 # : Main
 #Make these env variables uninheritable to subprocesses.
-#typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
-typeset +gx ZSH_TMUX_INSIDE
+typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
 function {
 	# Inside tmux:
 	if [[ "${ZSH_TMUX_INSIDE}" = "true" ]]; then
