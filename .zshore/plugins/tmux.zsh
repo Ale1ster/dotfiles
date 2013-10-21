@@ -242,7 +242,7 @@ function _zsh_tmux_restore_session ()	{
 	#_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.lock"
 }
 #DEBUGGING
-functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name,window_layout} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
+#functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name,window_layout} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
 # : Main
 #Make these env variables uninheritable to subprocesses.
 typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
