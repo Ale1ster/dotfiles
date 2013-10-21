@@ -88,14 +88,12 @@ function _zsh_tmux_track_pane ()		{
 	local ZSH_TMUX_PATH_OLD="${ZSH_TMUX_PATH}"
 	# Save the previous pane path (to check later) and create a new one.
 	ZSH_TMUX_PATH="${ZT_SESSION_ID}/${ZT_WINDOW_ID}/${ZT_PANE_ID}"
-	echo "DEBUG: new: ${ZSH_TMUX_PATH} vs old: ${ZSH_TMUX_PATH_OLD}"
 	# Create the proper directory hierarchy if it does not already exist.
 	if [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
 		mkdir --parents "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}" 2>/dev/null
 	fi
 	# If the name of the session symlink is not current, recreate it.
 	if [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]]; then
-		echo "DEBUG: session symlink renamed"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
 		#\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -execdir rm --force '{}' '+'
 		local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${(q)ZT_SESSION_ID}" -exec basename '{}' ';')"
@@ -108,14 +106,12 @@ function _zsh_tmux_track_pane ()		{
 	fi
 	# Insert a dummy time to the session log, so that later panes will not try to restore (only in case of tracking without a restore).
 	if [[ -f "${ZT_BASE_PATH}/${(q)ZT_SESSION_NAME}.log" ]] || [[ "$(_zsh_tmux_get_last_create_time "${(q)ZT_SESSION_NAME}")" -gt "$(_zsh_tmux_get_last_restore_time "${(q)ZT_SESSION_NAME}")" ]]; then
-		echo "DEBUG: debug restore criteria met"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
 		_zsh_tmux_log_dummy_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log" "${ZT_SESSION_NAME}"
 		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 	fi
 	# If the window is hardnamed, create the appropriate symlink.
 	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
-		echo "DEBUG: window symlink renamed"
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
 		\ln --symbolic "${ZT_WINDOW_ID}" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}"
@@ -123,7 +119,6 @@ function _zsh_tmux_track_pane ()		{
 	fi
 	# If the pane was previously being tracked and it has changed tracking path, move its stuff to the new location and clean up the old.
 	if [[ -n "${ZSH_TMUX_PATH_OLD}" ]] && [[ "${ZSH_TMUX_PATH}" != "${ZSH_TMUX_PATH_OLD}" ]]; then
-		echo "DEBUG: session/window/pane_path renamed"
 		if [[ -f "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/histfile" ]] || [[ -f "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/dirsfile" ]]; then
 			mv "${ZT_BASE_PATH}/${ZSH_TMUX_PATH_OLD}/"{histfile,dirsfile}(N) "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}"
 		fi
@@ -158,7 +153,6 @@ function _zsh_tmux_track_pane ()		{
 		fi
 	# Else (initial entry), create the history and dirstack files.
 	elif [[ -z "${ZSH_TMUX_PATH_OLD}" ]]; then
-		echo "DEBUG: _normally_, this is initial tracking"
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
 		DIRSFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/dirsfile"
 		print -lD ${PWD} ${(q)dirstack} > "${DIRSFILE}"
@@ -178,11 +172,9 @@ function _zsh_tmux_track_pane ()		{
 	_zsh_tmux_get_window_layout >! "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
 	_zsh_tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	# Reschedule.
-	echo "DEBUG: reschedule"
 	sched +00:01:00 _zsh_tmux_track_pane
 }
 function _zsh_tmux_restore_session ()	{
-	echo "Going for restore. This should be locked against multiple entry."
 	local ZT_SESSION_ID="$(_zsh_tmux_get_session_id)"
 	local ZT_SESSION_NAME="$(_zsh_tmux_get_session_name)"
 	#_zsh_tmux_lock_dir "${ZT_SESSION_ID}.lock"
@@ -190,7 +182,6 @@ function _zsh_tmux_restore_session ()	{
 	# If there is a log of the session being restored after it has been logged as initiated, do not restore it.
 	# : This covers the scenario where more than one pane discover they are running under an untracked session and try to restore it.
 	if _zsh_tmux_check_restore "${ZT_SESSION_NAME}"; then
-		echo "restoring"
 		# Backup any possible session directory that has the current session id and replace the symlink pointing to it.
 		if [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_NAME}")" != "${ZT_SESSION_ID}" ]] && [[ -d "${ZT_BASE_PATH}/${ZT_SESSION_ID}" ]]; then
 			_zsh_tmux_lock_dir "${ZT_SESSION_ID}.session_lock"
