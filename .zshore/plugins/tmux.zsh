@@ -235,9 +235,7 @@ function _zsh_tmux_restore_session ()	{
 			local ZT_LAYOUT_FILE="${ZT_BASE_PATH}/${ZT_SESSION_ID}/${window_i}.layout"
 			if [[ -f "${ZT_LAYOUT_FILE}" ]]; then
 				local ZT_WINDOW_LAYOUT="$(tc\c -run "${ZT_LAYOUT_SCRIPT}" "$(cat "${ZT_LAYOUT_FILE}")" "${ZT_PANE_LIST}")"
-				#...
-				echo "Echoing the proper layout: ${ZT_WINDOW_LAYOUT}"
-				#...
+				tmu\x select-layout -t "${ZT_WINDOW_ID}" "${ZT_WINDOW_LAYOUT}" &>/dev/null
 			fi
 			popd -q
 		done
