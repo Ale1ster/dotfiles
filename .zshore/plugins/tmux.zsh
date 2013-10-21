@@ -5,6 +5,7 @@ function _zsh_tmux_get_window_id ()				{ echo "$(tmu\x list-panes -F '#{window_i
 function _zsh_tmux_get_pane_id ()				{ echo "${TMUX_PANE}" }
 function _zsh_tmux_get_session_name ()			{ echo "$(tmu\x list-panes -F '#{session_name}' -t "${TMUX_PANE}" | head -n 1)" }
 function _zsh_tmux_get_window_name ()			{ echo "$(tmu\x list-panes -F '#{window_name}' -t "${TMUX_PANE}" | head -n 1)" }
+function _zsh_tmux_get_window_layout ()			{ echo "$(tmu\x list-panes -F '#{window_layout}' -t "${TMUX_PANE}" | head -n 1)" }
 function _zsh_tmux_check_window_hardnamed ()	{ tmu\x show-window-options | \grep --quiet "automatic-rename\soff" }
 function _zsh_tmux_get_last_create_time ()		{ echo "$(tmu\x list-clients -F '#{client_created}' -t ${(Q)1})" }
 function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${(Q)1}.log" }
@@ -12,8 +13,8 @@ function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${
 function _zsh_tmux_lock_dir ()		{ until mkdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null; do; done }
 function _zsh_tmux_unlock_dir ()	{ r\mdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null }
 # : Logging
-function _zsh_tmux_log_restore_time ()	{ echo "$(\date "+%s"):session restored" >> "${1}" }
-function _zsh_tmux_log_dummy_time ()	{ echo "$(tmu\x list-clients -F '#{client_created}' -t "${(Q)2}"):session restored" >> "${1}" }
+function _zsh_tmux_log_restore_time ()	{ echo "$(\date "+%s"):session restored" >>! "${1}" }
+function _zsh_tmux_log_dummy_time ()	{ echo "$(tmu\x list-clients -F '#{client_created}' -t "${(Q)2}"):session restored" >>! "${1}" }
 function _zsh_tmux_check_restore ()		{
 	# If there is a symlink to the session folder:
 	if [[ -h "$(\find "${ZT_BASE_PATH}" -xtype d -name "${(Q)1}")" ]]; then
@@ -56,7 +57,7 @@ function _zsh_tmux_sched_callback ()	{
 # : Hooks
 function _zsh_tmux_chpwd_hook ()	{
 	if [[ "${PWD}" != "${OLDPWD}" ]]; then
-		print -lD "${PWD}" >> "${DIRSFILE}"
+		print -lD "${PWD}" >>! "${DIRSFILE}"
 	fi
 }
 function _zsh_tmux_zshexit_hook ()	{
@@ -66,6 +67,7 @@ function _zsh_tmux_zshexit_hook ()	{
 	# Exiting a pane deletes it from tracking.
 	rm --force "${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/"{histfile,dirsfile}(N)
 	if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"; r\mdir --parents "${ZT_WINPANE}" 2>/dev/null); then
+		rm --force "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
 		if (pushd -q "${ZT_BASE_PATH}"; r\mdir --parents "${ZT_SESSION_ID}" 2>/dev/null); then
 			local ZT_SESSION_NAME="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID}" -exec basename '{}' ';')"
@@ -127,8 +129,9 @@ function _zsh_tmux_track_pane ()		{
 		local ZT_SESSION_ID_OLD="${ZSH_TMUX_PATH_OLD%%/*/*}"
 		local ZT_WINPANE_OLD="${ZSH_TMUX_PATH_OLD#*/}"
 		local ZT_WINDOW_ID_OLD="${ZT_WINPANE_OLD%%/*}"
-		# Recursively delete pane, window and session directories (if they are empty).
+		# Recursively delete pane, window and session directories (if they are empty). Also, move the window layout, in case it is needed (it is here, so that we don't have to do multiple checks.
 		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; r\mdir --parents "${ZT_WINPANE_OLD}" 2>/dev/null); then
+			mv "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}/${ZT_WINDOW_ID_OLD}.layout" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
 			\find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -execdir rm --force '{}' '+'
 			if (pushd -q "${ZT_BASE_PATH}"; r\mdir --parents "${ZT_SESSION_ID_OLD}" 2>/dev/null); then
 				local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' ';')"
@@ -169,6 +172,12 @@ function _zsh_tmux_track_pane ()		{
 #		add-zsh-hook zshexit _zsh_tmux_zshexit_hook
 		#<<TODO
 	fi
+	# Save the window layout to the proper file.
+	_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
+	##TODO: ...
+	_zsh_tmux_get_window_layout >! "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
+	##TODO: ...
+	_zsh_tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	echo "DEBUG: reschedule"
 	sched +00:01:00 _zsh_tmux_track_pane
 }
@@ -238,7 +247,7 @@ function _zsh_tmux_restore_session ()	{
 	#_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.lock"
 }
 #DEBUGGING
-functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
+functions -T _zsh_tmux_get_{{session,window,pane}_id,{session,window}_name,window_layout} _zsh_tmux_get_last_{create,restore}_time _zsh_tmux_check_{window_hardnamed,restore} _zsh_tmux_{,un}lock_dir _zsh_tmux_log_{restore,dummy}_time _zsh_tmux_sched_callback _zsh_tmux_{chpwd,zshexit}_hook _zsh_tmux_{track_pane,restore_session}
 # : Main
 #Make these env variables uninheritable to subprocesses.
 typeset +gx ZSH_TMUX_INSIDE ZSH_TMUX_PATH
