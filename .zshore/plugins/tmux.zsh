@@ -1,4 +1,5 @@
 local ZT_BASE_PATH="${zshore_dir}/.tmux_base"
+local ZT_LAYOUT_SCRIPT="${zshore_dir}/plugins/tmux_layout.c"
 # : Helpers
 function _zsh_tmux_get_session_id ()			{ echo "$(tmu\x list-panes -F '#{session_id}' -t "${TMUX_PANE}" | head -n 1)" }
 function _zsh_tmux_get_window_id ()				{ echo "$(tmu\x list-panes -F '#{window_id}' -t "${TMUX_PANE}" | head -n 1)" }
@@ -131,7 +132,7 @@ function _zsh_tmux_track_pane ()		{
 		local ZT_WINDOW_ID_OLD="${ZT_WINPANE_OLD%%/*}"
 		# Recursively delete pane, window and session directories (if they are empty). Also, move the window layout, in case it is needed (it is here, so that we don't have to do multiple checks.
 		if (pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}"; r\mdir --parents "${ZT_WINPANE_OLD}" 2>/dev/null); then
-			mv "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}/${ZT_WINDOW_ID_OLD}.layout" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
+			mv "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}/${ZT_WINDOW_ID_OLD}.layout" "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout" 2>/dev/null
 			\find "${ZT_BASE_PATH}/${ZT_SESSION_ID_OLD}" -lname "${ZT_WINDOW_ID_OLD}" -execdir rm --force '{}' '+'
 			if (pushd -q "${ZT_BASE_PATH}"; r\mdir --parents "${ZT_SESSION_ID_OLD}" 2>/dev/null); then
 				local ZT_SESSION_NAME_OLD="$(\find "${ZT_BASE_PATH}" -lname "${ZT_SESSION_ID_OLD}" -exec basename '{}' ';')"
@@ -174,10 +175,9 @@ function _zsh_tmux_track_pane ()		{
 	fi
 	# Save the window layout to the proper file.
 	_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
-	##TODO: ...
 	_zsh_tmux_get_window_layout >! "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
-	##TODO: ...
 	_zsh_tmux_unlock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
+	# Reschedule.
 	echo "DEBUG: reschedule"
 	sched +00:01:00 _zsh_tmux_track_pane
 }
@@ -231,8 +231,14 @@ function _zsh_tmux_restore_session ()	{
 					ZT_PANE_LIST+="${$(tmu\x split-window -d -PF '#{pane_id}' -t "${ZT_SESSION_NAME}:${ZT_WINDOW_ID}" "env ZSH_TMUX_PATH="${(q)ZT_SESSION_ID}/${window_i}/${pane_i}" ZSH_TMUX_MODE="restore" zsh")#%}"
 				fi
 			done
-			# TODO: Hash can be calculated with a script with "tcc -run" hashbang.
-			#...
+			# Calculate and restore the window layout.
+			local ZT_LAYOUT_FILE="${ZT_BASE_PATH}/${ZT_SESSION_ID}/${window_i}.layout"
+			if [[ -f "${ZT_LAYOUT_FILE}" ]]; then
+				local ZT_WINDOW_LAYOUT="$(tc\c -run "${ZT_LAYOUT_SCRIPT}" "$(cat "${ZT_LAYOUT_FILE}")" "${ZT_PANE_LIST}")"
+				#...
+				echo "Echoing the proper layout: ${ZT_WINDOW_LAYOUT}"
+				#...
+			fi
 			popd -q
 		done
 		popd -q
