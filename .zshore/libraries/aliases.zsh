@@ -40,6 +40,7 @@ alias vd='vimdiff'
 # tmux
 alias tmux='tmux -2'
 # git
+alias g='git'
 alias ga='git add'
 alias gap='git add -p'
 alias gpl='git pull'
