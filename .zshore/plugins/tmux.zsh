@@ -9,7 +9,7 @@ function _zsh_tmux_get_window_name ()			{ echo "$(tmu\x list-panes -F '#{window_
 function _zsh_tmux_get_window_layout ()			{ echo "$(tmu\x list-panes -F '#{window_layout}' -t "${TMUX_PANE}" | head -n 1)" }
 function _zsh_tmux_check_window_hardnamed ()	{ tmu\x show-window-options | \grep --quiet "automatic-rename\soff" }
 function _zsh_tmux_get_last_create_time ()		{ echo "$(tmu\x list-clients -F '#{client_created}' -t ${(Q)1})" }
-function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${(Q)1}.log" }
+function _zsh_tmux_get_last_restore_time ()		{ \sed -n "/session restored/h; \${x;s/:session restored//;p}" "${ZT_BASE_PATH}/${(Q)1}.log" 2>/dev/null }
 # : Locking
 function _zsh_tmux_lock_dir ()		{ until mkdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null; do; done }
 function _zsh_tmux_unlock_dir ()	{ r\mdir "${ZT_BASE_PATH}/${(Q)1}" 2>/dev/null }
@@ -77,7 +77,10 @@ function _zsh_tmux_zshexit_hook ()	{
 			fi
 		fi
 	fi
+	# Exit (I put this here, so that we can untrack a pane with a keybinding).
+	exit
 }
+zle -N _zsh_tmux_zshexit_hook
 # : Restoring - Tracking
 function _zsh_tmux_track_pane ()		{
 	local ZT_SESSION_ID="$(_zsh_tmux_get_session_id)"
@@ -156,17 +159,20 @@ function _zsh_tmux_track_pane ()		{
 		HISTFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/histfile"
 		DIRSFILE="${ZT_BASE_PATH}/${ZSH_TMUX_PATH}/dirsfile"
 		print -lD ${PWD} ${(q)dirstack} > "${DIRSFILE}"
-		#if [[ ${chpwd_functions[(r)_zsh_tmux_chpwd_hook]} != _zsh_tmux_chpwd_hook ]]; then
-		#	chpwd_functions+=(_zsh_tmux_chpwd_hook)
-		#fi
-		add-zsh-hook chpwd _zsh_tmux_chpwd_hook
-		#if [[ ${zshexit_functions[(r)_zsh_tmux_zshexit_hook]} != _zsh_tmux_zshexit_hook ]]; then
-		#	zshexit_functions+=(_zsh_tmux_zshexit_hook)
-		#fi
-		#>>TODO: This is called even when we kill the session. I don't know if I want that...
-#		add-zsh-hook zshexit _zsh_tmux_zshexit_hook
-		#<<TODO
 	fi
+	# Insert hooks.
+	#if [[ ${chpwd_functions[(r)_zsh_tmux_chpwd_hook]} != _zsh_tmux_chpwd_hook ]]; then
+	#	chpwd_functions+=(_zsh_tmux_chpwd_hook)
+	#fi
+	add-zsh-hook chpwd _zsh_tmux_chpwd_hook
+	#if [[ ${zshexit_functions[(r)_zsh_tmux_zshexit_hook]} != _zsh_tmux_zshexit_hook ]]; then
+	#	zshexit_functions+=(_zsh_tmux_zshexit_hook)
+	#fi
+	#NOTE: This is called even when we kill the session. Since I don't want that, I bind a key to remove a pane from tracking. "^d" kills a pane without untracking it.
+	#add-zsh-hook zshexit _zsh_tmux_zshexit_hook
+	# Bind a key to exit a pane and remove it from tracking.
+	bindkey -M viins "^f"					_zsh_tmux_zshexit_hook
+	bindkey -M vicmd "^f"					_zsh_tmux_zshexit_hook
 	# Save the window layout to the proper file.
 	_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 	_zsh_tmux_get_window_layout >! "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_ID}.layout"
@@ -203,6 +209,9 @@ function _zsh_tmux_restore_session ()	{
 		pushd -q "${ZT_BASE_PATH}/${ZT_SESSION_ID}"
 		typeset -a windows_list; windows_list=( ${(pws: :)"$(print \@[[:digit:]](#c1,)(/N^MT))"} )
 		for window_i in ${windows_list}; do
+			# Stash the layout string.
+			local ZT_LAYOUT_FILE="${ZT_BASE_PATH}/${ZT_SESSION_ID}/${window_i}.layout"
+			local ZT_LAYOUT_STRING_OLD="$(cat "${ZT_LAYOUT_FILE}" 2>/dev/null)"
 			pushd -q "${window_i}"
 			# Find the window name through the symlink pointing to the window folder.
 			local ZT_WINDOW_NAME="$(\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${window_i}" -exec basename '{}' ';')"
@@ -223,9 +232,8 @@ function _zsh_tmux_restore_session ()	{
 				fi
 			done
 			# Calculate and restore the window layout.
-			local ZT_LAYOUT_FILE="${ZT_BASE_PATH}/${ZT_SESSION_ID}/${window_i}.layout"
 			if [[ -f "${ZT_LAYOUT_FILE}" ]]; then
-				local ZT_WINDOW_LAYOUT="$(tc\c -run "${ZT_LAYOUT_SCRIPT}" "$(cat "${ZT_LAYOUT_FILE}")" "${ZT_PANE_LIST}")"
+				local ZT_WINDOW_LAYOUT="$(tc\c -run "${ZT_LAYOUT_SCRIPT}" "${ZT_LAYOUT_STRING_OLD}" "${ZT_PANE_LIST[@]}")"
 				tmu\x select-layout -t "${ZT_WINDOW_ID}" "${ZT_WINDOW_LAYOUT}" &>/dev/null
 			fi
 			popd -q
