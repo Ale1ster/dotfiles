@@ -114,7 +114,8 @@ function _zsh_tmux_track_pane ()		{
 		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 	fi
 	# If the window is hardnamed, create the appropriate symlink.
-	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
+#	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
+	if _zsh_tmux_check_window_hardnamed && [[ "${$(\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir basename '{}' ';')##*_}" !=  "${ZT_WINDOW_ID}" ]]; then
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
 		\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${ZT_WINDOW_ID}" -execdir rm --force '{}' '+'
 ###################HERE: The next line was modified.
