@@ -60,7 +60,7 @@ alias lynx='lynx -cfg=~/.lynx.cfg'
 alias beautify_c='astyle --style=java --indent=force-tab=4 --add-brackets --indent-switches --indent-cases'
 # various
 alias rlwrap='rlwrap -Acr'
-# xclipboard (primary and clipboard) (copy, append, paster, clear, keep)
+# xclipboard (primary and clipboard) x (copy, append, paste, clear, keep)
 alias pbc='xsel --input'
 alias pba='xsel --append'
 alias pbp='xsel --output'

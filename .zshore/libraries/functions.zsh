@@ -10,7 +10,7 @@ function open () {
 			*.png | *.jpg | *.jpeg | *.JPG)
 				feh "$1" &
 				;;
-			*.pdf | *.ps)
+			*.pdf | *.ps | *.djvu)
 				zathura --fork "$1"
 				;;
 			*.odt | *.doc)
