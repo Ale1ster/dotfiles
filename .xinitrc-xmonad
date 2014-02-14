@@ -28,15 +28,15 @@ setxkbmap -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,g
 #	<<not in repos?>>flux  /dev/null 2>&1
 
 # Background
-#feh --bg-scale ~/Pictures/Wallpapers/277_size_1366x768_89.jpg
-feh --bg-scale ~/Pictures/Wallpapers/hd_1366_x_768_taringa.jpg
+feh --bg-scale ~/Pictures/Wallpapers/nature-wallpaper-1366x768-055.jpg
+#feh --bg-scale ~/Pictures/Wallpapers/hd_1366_x_768_taringa.jpg
 # Composite window manager
 xcompmgr -c &
 # Conky
 conky -d
 
 # Trayer
-exec trayer --edge top --align center --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --width 6 --height 16 &
+exec trayer --edge top --align center --SetDockType true --SetPartialStrut true --expand true --transparent true --alpha 0 --tint 0x000000 --width 10 --height 16 &
 
 # Xxkb
 xxkb &

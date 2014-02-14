@@ -1,5 +1,11 @@
 ## ==== BASIC CONFIGURATION ====
 
+# ==== ZSH ENV ====
+typeset +gx ZSHENV_SOURCED
+if [[ "${ZSHENV_SOURCED}" != "true" ]]; then
+	source "${HOME}/.zshenv"
+fi
+
 # ==== ZSH OPTIONS ====
 
 # Environment variables

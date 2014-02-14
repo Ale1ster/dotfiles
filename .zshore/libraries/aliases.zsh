@@ -1,14 +1,19 @@
 #:: If we want to disable autocorrection for specific commands (and their arguments), we alias them as such: "alias %='nocorrect %'"
 
 # shell
+alias configure="pushd \"${zshore_dir}/\""
 alias resource='source ~/.zshenv && source $ZDOTDIR/.zshrc'
 alias shit="zcompile \"${zshore_dir}/.zshrc\"; rehash"		# for when you just can't find a new program :)
 # lolzies
 alias wtf='dmesg'
 alias rtfm='man'
+alias mall='man -a'
+alias manie='man -K'
 alias tldr='less'
 alias stalk='finger'
 alias oops='rm -rf'
+alias pebcak='i3lock -n -c 0b3b1b'
+alias e='echo "emacs? really!?"'
 # history
 alias history='fc -l 1'
 alias hist='builtin history'
@@ -24,11 +29,16 @@ alias sl='ls'
 alias t='tree'
 alias ta='tree -aF --noreport'
 alias tap='tree -apF --noreport'
-# cd
+# cd - autojump
 alias p='pushd'
 alias o='popd'
 alias c='cd'
 alias dv='dirs -v'
+alias dsc='dirs -c'		# For directory stack clear
+alias j='j'
+alias jc='jc'
+alias jp='autojump --purge'
+alias jl='autojump --stat'
 # rm
 alias rd='rmdir'
 alias rmd='rm -r'
@@ -60,7 +70,8 @@ alias lynx='lynx -cfg=~/.lynx.cfg'
 alias beautify_c='astyle --style=java --indent=force-tab=4 --add-brackets --indent-switches --indent-cases'
 # various
 alias rlwrap='rlwrap -Acr'
-# xclipboard (primary and clipboard) x (copy, append, paste, clear, keep)
+alias cx='chmod +x'
+# xclipboard (primary, clipboard) x (copy, append, paste, clear, keep)
 alias pbc='xsel --input'
 alias pba='xsel --append'
 alias pbp='xsel --output'
@@ -75,7 +86,13 @@ alias cbk='xsel --output --clipboard | xsel --input --clipboard'
 alias feh='feh --auto-zoom --fullscreen'
 # mplayer
 alias vp='mplayer -name MPPlaylist -use-filename-title -loop 0 -fs'	# name is for workspace anchoring
+# stardict
+alias word='sdcv'
+# calendar
+alias calendar='cal --color=always'
+alias ycal='cal --color=always -y'
 # system
+alias discover='sudo airmon-ng start wlp3s0; sudo airodump-ng mon0; sudo airmon-ng stop mon0'
 alias _='sudo'
 alias oust='sudo pkill -u'
 alias die='sudo shutdown -h now'
@@ -84,8 +101,12 @@ alias bb='die'
 alias reboot='sudo reboot'
 # packages
 alias sup='sudo pacmatic -Syu'
+alias sus='sudo pacmatic -S'
 alias info='pacman -Si'
 alias linfo='pacman -Qi'
+alias pacfiles='pacman -Ql'
+# languages
+alias bf='brainfuck'
 
 # suffixes
 alias -s c=vim

@@ -13,8 +13,14 @@ function open () {
 			*.pdf | *.ps | *.djvu)
 				zathura --fork "$1"
 				;;
-			*.odt | *.doc)
-				libreoffice "$1" &> /dev/null &
+			*.odt | *.doc | *.rtf)
+				abiword "$1" &> /dev/null &
+				;;
+			*.pps | *.ppt)
+				tonicpoint "$1" &> /dev/null &
+				;;
+			*.mobi | *.epub)
+				FBReader "$1" &> /dev/null &
 				;;
 			*)
 				vim "$1"
@@ -91,4 +97,12 @@ function spawnx () {
 # skype wrapper
 function skype () {
 	xhost +local: && su skype -c "nohup /usr/bin/skype &"
+}
+
+# create and chmod +x file (for executable script writing): (mnemonic: Produce eXecutable)
+function px () {
+	for i in "$@"
+	do
+		touch "$i" && chmod +x "$i"
+	done
 }
