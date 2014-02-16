@@ -63,6 +63,8 @@ alias gm='git merge'
 alias gst='git status'
 alias gdf='git diff'
 alias gt='git tree'
+# embedded make
+alias me='make_embedded_hashbang.pl'
 # networking
 alias ping='ping -c 4'
 alias lynx='lynx -cfg=~/.lynx.cfg'
