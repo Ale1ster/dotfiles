@@ -212,6 +212,18 @@ function sudo-command-line () {
 zle -N sudo-command-line
 bindkey -M vicmd "su"					sudo-command-line
 
+#Search manual pages for the current command
+function man-search-command () {
+	[[ -z "$BUFFER" ]] && return
+	if [[ ! "$BUFFER" =~ "(^man\s+)" ]]; then
+		BUFFER="man ${${=BUFFER}[1]}"
+		CURSOR=$((CURSOR+4))
+	fi
+}
+zle -N man-search-command
+bindkey -M vicmd "??"					man-search-command
+bindkey -M vicmd "man"					man-search-command
+
 # Accept current match in current menu selection and continue
 bindkey -M menuselect "^o"				accept-and-infer-next-history
 bindkey -M menuselect "^d"				reverse-menu-complete
