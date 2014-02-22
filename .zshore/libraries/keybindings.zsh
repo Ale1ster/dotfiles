@@ -216,7 +216,7 @@ bindkey -M vicmd "su"					sudo-command-line
 function man-search-command () {
 	[[ -z "$BUFFER" ]] && return
 	if [[ ! "$BUFFER" =~ "(^man\s+)" ]]; then
-		BUFFER="man ${${=BUFFER}[1]}"
+		BUFFER="man ${BUFFER[(w)1]}"
 		CURSOR=$((CURSOR+4))
 	fi
 }
