@@ -16,7 +16,7 @@ function open () {
 			*.odt | *.doc | *.rtf)
 				abiword "$1" &> /dev/null &
 				;;
-			*.pps | *.ppt)
+			*.pps | *.ppt | *.pptx)
 				tonicpoint "$1" &> /dev/null &
 				;;
 			*.mobi | *.epub)

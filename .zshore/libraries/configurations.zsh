@@ -2,6 +2,14 @@
 
 #export LS_COLORS="fi=0:di=34:ln=36:or=31:mi=33:ex=32:so=90:pi=35:cd=1;93:bd=1;31:"
 
+# ==== xdg ====
+
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_DATA_HOME="${HOME}/.local/share"
+export XDG_CONFIG_DIRS="/etc/xdg"
+export XDG_DATA_DIRS="/usr/local/share:/usr/share"
+export XDG_CACHE_HOME="${HOME}/.cache"
+
 # ==== grep ====
 
 export GREP_OPTIONS="--binary-files=without-match --line-number --ignore-case --color=auto"
