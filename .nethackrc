@@ -1,0 +1,13 @@
+##http://nethackwiki.com/wiki/Options
+
+OPTIONS=align_message:bottom, align_status:top
+OPTIONS=ascii_map, color, DECgraphics, !eight_bit_tty, extmenu, fullscreen, large_font, !legacy, !mouse_support, msghistory:20, msg_window:reversed, news, number_pad:0, popup_dialog, prayconfirm, preload_tiles, scores:10t 2a o, scroll_margin:10, scroll_amount:10, showexp, showrace, showscore, silent, sortpack, sound, sparkle, !splash_screen, standout, time, timed_delay, tombstone, travel, verbose, warnings:012345, wraptext
+OPTIONS=windowcolors:menu white/black message green/yellow status white/blue text white/black, windowtype:tty
+OPTIONS=boulder:8, fruit:banana, hilite_pet, lit_corridor
+OPTIONS=!autodig, autopickup, autoquiver, confirm, fixinv, pickup_burden:Stressed, pickup_types:all, pushweapon, !rest_on_space, runmode:walk
+#OPTIONS=paranoid_hit
+OPTIONS=checkpoint, cmdassist, disclose:-i -a -v -g -c, help, !ignintr
+OPTIONS=menu_deselect_all:-, menu_deselect_page:\\, menu_first_page:\^, menu_last_page:|, menu_headings:bold, menu_invert_all:@, menu_invert_page:~, menu_next_page:>, menu_previous_page:<, menu_search::, menu_select_all:., menu_select_page:\,, menustyle:full
+OPTIONS=name:ale1ster, gender:female, role:Valkyrie, race:Dwarf
+OPTIONS=safe_pet, pettype:dog, dogname:Ori, catname:Tiger, horsename:Thunder
+#LEFT at map_mode (not looked at {dog,cat,horse}name yet)
