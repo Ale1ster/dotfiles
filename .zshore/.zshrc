@@ -2,7 +2,7 @@
 
 # ==== ZSH ENV ====
 typeset +gx ZSHENV_SOURCED
-if [[ "${ZSHENV_SOURCED}" != "true" ]]; then
+if [[ "${ZSHENV_SOURCED}" != "${HOME}/.zshore" ]]; then
 	source "${HOME}/.zshenv"
 fi
 

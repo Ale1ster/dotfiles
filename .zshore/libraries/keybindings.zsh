@@ -224,6 +224,17 @@ zle -N man-search-command
 bindkey -M vicmd "??"					man-search-command
 bindkey -M vicmd "man"					man-search-command
 
+#Perform a which on the first word of the command line
+function which-command-first-word () {
+	[[ -z "$BUFFER" ]] && return
+	if [[ ! "$BUFFER" =~ "(^which\s+)" ]]; then
+		BUFFER="which ${BUFFER[(w)1]}"
+		CURSOR=$((CURSOR+6))
+	fi
+}
+zle -N which-command-first-word
+bindkey -M vicmd "which"				which-command-first-word
+
 # Accept current match in current menu selection and continue
 bindkey -M menuselect "^o"				accept-and-infer-next-history
 bindkey -M menuselect "^d"				reverse-menu-complete

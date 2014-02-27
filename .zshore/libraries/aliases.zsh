@@ -9,6 +9,7 @@ alias wtf='dmesg'
 alias rtfm='man'
 alias mall='man -a'
 alias manie='man -K'
+alias uman='mandb'
 alias tldr='less'
 alias stalk='finger'
 alias oops='rm -rf'
@@ -109,6 +110,9 @@ alias linfo='pacman -Qi'
 alias pacfiles='pacman -Ql'
 # languages
 alias bf='brainfuck'
+# games
+alias nh='nethack'
+alias ts='typespeed'
 
 # suffixes
 alias -s c=vim

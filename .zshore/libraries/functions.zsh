@@ -22,6 +22,9 @@ function open () {
 			*.mobi | *.epub)
 				FBReader "$1" &> /dev/null &
 				;;
+			*.zip | *.rar | *.tar | *.tgz | *.gz | *.bz2)
+				echo "That is a compressed file. Are you sure you want to open it?"
+				;;
 			*)
 				vim "$1"
 				;;
