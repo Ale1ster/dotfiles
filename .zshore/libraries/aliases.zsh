@@ -1,7 +1,7 @@
 #:: If we want to disable autocorrection for specific commands (and their arguments), we alias them as such: "alias %='nocorrect %'"
 
 # shell
-alias configure="pushd \"${zshore_dir}/\""
+alias config="pushd \"${zshore_dir}/\""
 alias resource='source ~/.zshenv && source $ZDOTDIR/.zshrc'
 alias shit="zcompile \"${zshore_dir}/.zshrc\"; rehash"		# for when you just can't find a new program :)
 # lolzies
