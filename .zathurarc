@@ -1,1 +1,248 @@
-#set pages-per-row 3
+### Settings
+##General
+set n-completion-items				19
+set guioptions						"s"
+##Completion
+#completion-fg: "#DDDDDD" | "#606060" | "#808080"
+set completion-bg					"#232323"
+set completion-fg					"#707070"
+set completion-group-bg				"#C0C0C0"
+set completion-group-fg				"#DEDEDE"
+set completion-highlight-bg			"#336600"
+set completion-highlight-fg			"#232323"
+##Colors
+#TODO: Where are 'default-bg' and 'default-fg' used? They don't seem to have any effect to pdfs.
+#set default-bg						"#000000"
+#set default-fg						"#DDDDDD"
+set inputbar-bg						"#131313"
+set inputbar-fg						"#9FBC00"
+set notification-bg					"#808080"
+set notification-fg					"#000000"
+set notification-warning-bg			"#101010"
+set notification-warning-fg			"#FFF712"
+set notification-error-bg			"#101010"
+set notification-error-fg			"#FF1212"
+##Status bar
+#statusbar-bg: "#280000"
+set statusbar-bg					"#200000"
+set statusbar-fg					"#FFFFFF"
+set statusbar-h-padding				2
+set statusbar-v-padding				0
+##Tabs (These seem to have no effect on lappy) :: I think it had sth to do with 'tabbed' not installed.
+set tabbar-bg						"#000000"
+set tabbar-fg						"#FFFFFF"
+set tabbar-focus-bg					"#787878"
+set tabbar-focus-fg					"#9FBC00"
+##Scrollbars
+set show-scrollbars					false
+set show-h-scrollbar				false
+set show-v-scrollbar				false
+##System
+set page-cache-size					15
+##Selection
+set selection-clipboard				"clipboard"
+##Navigation
+set advance-pages-per-row			false
+##Search
+set abort-clear-search				true
+set incremental-search				true
+set highlight-color					"#909090"
+set highlight-active-color			"#006600"
+set highlight-transparency			0.5
+set search-hadjust					false
+##Files
+set window-title-basename			true
+set window-title-page				true
+set statusbar-basename				false
+set adjust-open						"best-fit"
+set page-padding					4
+set pages-per-row					1
+#TODO: set first-page-column		1
+##Recoloring
+set recolor							false
+set recolor-keephue					true
+set recolor-darkcolor				"#B0B0B0"
+set recolor-lightcolor				"#000000"
+##Rendering
+#render-loading-bg: "#200000"
+set render-loading					true
+set render-loading-bg				"#000000"
+set render-loading-fg				"#FFFFFF"
+#TODO: set font						"monospace normal 9"
+##Scrolling
+set scroll-hstep					-1
+set scroll-step						40
+set scroll-full-overlap				0.1
+set scroll-wrap						false
+set scroll-page-aware				true
+##Links
+set link-zoom						false
+set link-hadjust					false
+##Zoom (max and min are in percentages, so max is 10x and min 0.1x)
+set zoom-center						true
+set zoom-max						1000
+set zoom-min						10
+set zoom-step						5
+##Various
+set exec-command					""
+##GUI (These have no meaning in a tiling window manager :)
+#set window-height					600
+#set window-width					800
+
+### Mappings (modes: normal, fullscreen, index)
+##Quit
+map		[normal]		q			quit
+map		[fullscreen]	q			quit
+map		[index]			q			quit
+map		[normal]		Q			quit
+map		[fullscreen]	Q			quit
+map		[index]			Q			quit
+##Mode toggling (normal, index, fullscreen, multiple-page-view), {input,status}bar toggling
+map		[normal]		<C-c>		abort
+map		[fullscreen]	<C-c>		abort
+map		[index]			<C-c>		abort
+unmap	[normal]		d
+map		[normal]		D			toggle_page_mode
+map		[normal]		<Tab>		toggle_index
+map		[fullscreen]	<Tab>		toggle_index
+map		[index]			<Tab>		toggle_index
+#unmap	[normal]		<Esc>
+#unmap	[fullscreen]	<Esc>
+#unmap	[index]			<Esc>
+#map		[normal]		<Esc>		toggle_fullscreen
+#map		[fullscreen]	<Esc>		toggle_fullscreen
+#map		[index]			<Esc>		toggle_fullscreen
+#unmap	[normal]		<F5>
+#unmap	[fullscreen]	<F5>
+map		[normal]		<C-m>		toggle_inputbar
+map		[index]			<C-m>		toggle_inputbar
+map		[normal]		<C-n>		toggle_statusbar
+map		[index]			<C-n>		toggle_statusbar
+##Page adjustment (best-fit or width), rotate
+map		[normal]		b			adjust_window best-fit
+map		[fullscreen]	b			adjust_window best-fit
+map		[normal]		w			adjust_window width
+map		[fullscreen]	w			adjust_window width
+unmap	[normal]		a
+unmap	[normal]		s
+unmap	[normal]		R
+map		[normal]		Rr			rotate rotate-cw
+map		[normal]		Rl			rotate rotate-ccw
+##Input
+map		[normal]		:			focus_inputbar ":"
+map		[index]			:			focus_inputbar ":"
+map		[normal]		;			focus_inputbar ":"
+map		[index]			;			focus_inputbar ":"
+##Search
+map		[normal]		/			focus_inputbar "/"
+map		[fullscreen]	/			focus_inputbar "/"
+map		[normal]		?			focus_inputbar "?"
+map		[fullscreen]	?			focus_inputbar "?"
+map		[normal]		,			set nohlsearch
+map		[fullscreen]	,			set nohlsearch
+map		[index]			,			set nohlsearch
+map		[normal]		n			search forward
+map		[fullscreen]	n			search forward
+map		[normal]		N			search backward
+map		[fullscreen]	N			search backward
+map		[normal]		p			search backward
+map		[fullscreen]	p			search backward
+##Links
+map		[normal]		f			follow
+map		[fullscreen]	f			follow
+map		[normal]		F			display_link
+map		[fullscreen]	F			display_link
+##Jumping
+map		[normal]		gg			goto top
+map		[fullscreen]	gg			goto top
+#Couldn't find how to work this out. When I bind "g", it ignores "gg", taking it as 2 consecutive goto commands!
+#map		[normal]		g		goto
+#map		[fullscreen]	g		goto
+map		[normal]		G			goto bottom
+map		[fullscreen]	G			goto bottom
+map		[normal]		<C-i>		jumplist forward
+map		[fullscreen]	<C-i>		jumplist forward
+map		[normal]		<C-o>		jumplist backward
+map		[fullscreen]	<C-o>		jumplist backward
+##Navigation
+map		[normal]		K			navigate previous
+map		[fullscreen]	K			navigate previous
+map		[normal]		J			navigate next
+map		[fullscreen]	J			navigate next
+map		[normal]		<PageUp>	navigate previous
+map		[fullscreen]	<PageUp>	navigate previous
+map		[normal]		<PageDown>	navigate next
+map		[fullscreen]	<PageDown>	navigate next
+map		[normal]		<Space>		navigate next
+map		[fullscreen]	<Space>		navigate next
+map		[normal]		<S-Space>	navigate previous
+map		[fullscreen]	<S-Space>	navigate previous
+map		[normal]		<BackSpace>	navigate previous
+map		[fullscreen]	<BackSpace>	navigate previous
+map		[fullscreen]	<Up>		navigate next
+map		[fullscreen]	<Left>		navigate next
+map		[fullscreen]	<Down>		navigate previous
+map		[fullscreen]	<Right>		navigate previous
+map		[index]			k			navigate_index up
+map		[index]			j			navigate_index down
+map		[index]			h			navigate_index collapse
+map		[index]			l			navigate_index expand
+map		[index]			H			navigate_index collapse-all
+map		[index]			L			navigate_index expand-all
+map		[index]			zr			navigate_index expand
+map		[index]			zm			navigate_index collapse
+map		[index]			zR			navigate_index expand-all
+map		[index]			zM			navigate_index collapse-all
+map		[index]			<Up>		navigate_index up
+map		[index]			<Down>		navigate_index down
+map		[index]			<Left>		navigate_index collapse
+map		[index]			<Right>		navigate_index expand
+map		[index]			<Space>		navigate_index select
+map		[index]			<Return>	navigate_index select
+##Printing
+map		[normal]		<C-p>		print
+map		[fullscreen]	<C-p>		print
+map		[index]			<C-p>		print
+##Reloading
+map		[normal]		.			reload
+map		[fullscreen]	.			reload
+map		[index]			.			reload
+##Recolor
+map		[normal]		r			recolor
+map		[fullscreen]	r			recolor
+map		[index]			r			recolor
+##Scrolling
+map		[normal]		k			scroll up
+map		[normal]		j			scroll down
+map		[normal]		h			scroll left
+map		[normal]		l			scroll right
+map		[normal]		<Up>		scroll up
+map		[normal]		<Down>		scroll down
+map		[normal]		<Left>		scroll left
+map		[normal]		<Right>		scroll right
+map		[normal]		t			scroll full-left
+map		[normal]		y			scroll full-right
+map		[normal]		d			scroll full-down
+map		[normal]		u			scroll full-up
+map		[normal]		<C-t>		scroll half-left
+map		[normal]		<C-y>		scroll half-right
+map		[normal]		<C-d>		scroll half-down
+map		[normal]		<C-u>		scroll half-up
+map		[normal]		<Space>		scroll full-down
+map		[normal]		<S-Space>	scroll full-up
+##Zooming
+map		[normal]		+			zoom in
+map		[fullscreen]	+			zoom in
+map		[normal]		-			zoom out
+map		[fullscreen]	-			zoom out
+map		[normal]		zi			zoom in
+map		[fullscreen]	zi			zoom in
+map		[normal]		zo			zoom out
+map		[fullscreen]	zo			zoom out
+map		[normal]		z0			zoom default		#original
+map		[fullscreen]	z0			zoom default
+map		[normal]		zz			zoom specific
+map		[fullscreen]	zz			zoom specific
+
+#...>>PREVIOUSLY: Basically finished!?
+#TODO: Still no fullscreen!!!!
