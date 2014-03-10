@@ -113,6 +113,7 @@ function _zsh_tmux_track_pane ()		{
 		_zsh_tmux_log_dummy_time "${ZT_BASE_PATH}/${ZT_SESSION_NAME}.log" "${ZT_SESSION_NAME}"
 		_zsh_tmux_unlock_dir "${ZT_SESSION_ID}.session_lock"
 	fi
+####TODO: HERE too...............
 	# If the window is hardnamed, create the appropriate symlink.
 	if _zsh_tmux_check_window_hardnamed && [[ "$(readlin\k "${ZT_BASE_PATH}/${ZT_SESSION_ID}/${ZT_WINDOW_NAME}")" != "${ZT_WINDOW_ID}" ]]; then
 		_zsh_tmux_lock_dir "${ZT_SESSION_ID}/${ZT_WINDOW_ID}.window_lock"
@@ -215,6 +216,7 @@ function _zsh_tmux_restore_session ()	{
 			pushd -q "${window_i}"
 			# Find the window name through the symlink pointing to the window folder.
 			local ZT_WINDOW_NAME="$(\find "${ZT_BASE_PATH}/${ZT_SESSION_ID}" -lname "${window_i}" -exec basename '{}' ';')"
+########TODO: HERE...............................
 			local ZT_WINDOW_ID
 			typeset -a ZT_PANE_LIST; ZT_PANE_LIST=()
 			typeset -a panes_list; panes_list=( ${(pws: :)"$(print \%[[:digit:]](#c1,)(/N^MT))"} )
