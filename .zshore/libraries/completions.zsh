@@ -49,7 +49,7 @@ zstyle ':completion:*:(cd|ls):*' special-dirs ..
 # Ignore already present entries in some commands
 zstyle ':completion:*(rm|kill|diff):*' ignore-line true
 
-# Formatting and messages (I don't like it, but it keep for the sake of clarity)
+# Formatting and messages (I don't like it, but it's kept for the sake of clarity)
 #zstyle ':completion:*' verbose yes
 #zstyle ':completion:*' group-name ''
 #zstyle ':completion:*:descriptions' format '%B%d%b'
