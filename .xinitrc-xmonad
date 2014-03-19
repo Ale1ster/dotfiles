@@ -21,14 +21,16 @@ xdotool mousemove 2000 0
 syndaemon -k -i 1 -d
 
 # Keyboard setup for switching languages
-#setxkbmap -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,gr,jp" -variant ",,kana"
-setxkbmap -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,gr,jp"
+#Just learned something interesting (/usr/share/X11/xkb/rules/xorg.lst): You can keep AltGr(switch) pressed to type with the next keymap without switching.
+setxkbmap -option "" -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,gr,jp"
+#setxkbmap -option "" -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -layout "us,gr,jp" -variant "dvoral-alt-intl,,"
 
 # Auto setup of brightness/color according to time
 #	<<not in repos?>>flux  /dev/null 2>&1
 
 # Background
-feh --bg-scale ~/Pictures/Wallpapers/nature-wallpaper-1366x768-055.jpg
+feh --bg-scale ~/Pictures/Wallpapers/Canyons_wallpapers_520.jpg
+#feh --bg-scale ~/Pictures/Wallpapers/nature-wallpaper-1366x768-055.jpg
 #feh --bg-scale ~/Pictures/Wallpapers/hd_1366_x_768_taringa.jpg
 # Composite window manager
 xcompmgr -c &
