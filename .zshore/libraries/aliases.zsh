@@ -105,6 +105,7 @@ alias reboot='sudo reboot'
 # packages
 alias sup='sudo pacmatic -Syu'
 alias sus='sudo pacmatic -S'
+alias sua='yaourt -S'
 alias info='pacman -Si'
 alias linfo='pacman -Qi'
 alias pacfiles='pacman -Ql'
