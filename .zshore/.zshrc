@@ -191,6 +191,10 @@ source $zshore_dir/libraries/functions.zsh
 
 source $zshore_dir/libraries/configurations.zsh
 
+## ==== TEMPORARIES ====
+
+source $zshore_dir/libraries/temps.sh
+
 ## ==== PLUGINS ====
 
 # Plugins
