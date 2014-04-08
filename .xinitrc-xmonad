@@ -29,9 +29,8 @@ setxkbmap -option "" -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -l
 #	<<not in repos?>>flux  /dev/null 2>&1
 
 # Background
-feh --bg-scale ~/Pictures/Wallpapers/Canyons_wallpapers_520.jpg
-#feh --bg-scale ~/Pictures/Wallpapers/nature-wallpaper-1366x768-055.jpg
-#feh --bg-scale ~/Pictures/Wallpapers/hd_1366_x_768_taringa.jpg
+feh --bg-scale ~/Pictures/Wallpapers/snow_leopard.jpg
+#feh --bg-scale ~/Pictures/Wallpapers/canyons.jpg		#feh --bg-scale ~/Pictures/Wallpapers/tree_leaning_over_river.jpg
 # Composite window manager
 xcompmgr -c &
 # Conky

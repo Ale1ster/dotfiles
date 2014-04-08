@@ -44,7 +44,7 @@ xF86AudioMute			= 0x1008ff12
 myTerminal	= "urxvt"
 
 -- Workspaces
-myWorkspaces	= [ "1:code", "2:web", "3:project", "4:manage", "5:sys", "6:remote", "7:various", "8" ] {- ++ map show [7..8] -} ++ [ "NSP", "9:fun", "0:im" ]
+myWorkspaces	= [ "1:code", "2:web", "3:project", "4:manage", "5:sys", "6:remote", "7:various", "8" ] {- ++ map show [7..8] -} ++ [ "9:fun", "0:im", "NSP" ]
 
 -- Window Border Colors
 myNormalBorderColor		= "#3465a4"
@@ -54,7 +54,7 @@ myFocusedBorderColor	= "#ff950e"	--"#c02222"	--"#dddddd"
 myBorderWidth	= 1
 
 -- Workspace Switch Keys
-myWorkspaceSwitchKeys	= [ xK_1..xK_8 ] ++ [xK_minus] ++ [ xK_9, xK_0 ] -- ++ [ xK_equal ]
+myWorkspaceSwitchKeys	= [ xK_1..xK_8 ] ++ [ xK_9, xK_0 ] ++ [xK_minus] -- ++ [ xK_equal ]
 
 -- Key Bindings
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
