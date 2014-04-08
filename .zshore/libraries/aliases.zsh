@@ -114,6 +114,8 @@ alias bf='brainfuck'
 # games
 alias nh='nethack'
 alias ts='typespeed'
+alias 2048='bash2048'
+alias dvor='learn'		#'dvorak7min'
 
 # suffixes
 alias -s c=vim
