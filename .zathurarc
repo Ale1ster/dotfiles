@@ -181,10 +181,10 @@ map		[normal]		<S-Space>	navigate previous
 map		[fullscreen]	<S-Space>	navigate previous
 map		[normal]		<BackSpace>	navigate previous
 map		[fullscreen]	<BackSpace>	navigate previous
-map		[fullscreen]	<Up>		navigate next
-map		[fullscreen]	<Left>		navigate next
-map		[fullscreen]	<Down>		navigate previous
-map		[fullscreen]	<Right>		navigate previous
+map		[fullscreen]	<Up>		navigate previous
+map		[fullscreen]	<Left>		navigate previous
+map		[fullscreen]	<Down>		navigate next
+map		[fullscreen]	<Right>		navigate next
 map		[index]			k			navigate_index up
 map		[index]			j			navigate_index down
 map		[index]			h			navigate_index collapse
