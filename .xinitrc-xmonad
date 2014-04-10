@@ -29,7 +29,7 @@ setxkbmap -option "" -option "grp:switch,grp:alt_shift_toggle,grp_led:scroll" -l
 #	<<not in repos?>>flux  /dev/null 2>&1
 
 # Background
-feh --bg-scale ~/Pictures/Wallpapers/snow_leopard.jpg
+feh --bg-scale ~/Pictures/Wallpapers/snow_leopard_flopped.jpg
 #feh --bg-scale ~/Pictures/Wallpapers/canyons.jpg		#feh --bg-scale ~/Pictures/Wallpapers/tree_leaning_over_river.jpg
 # Composite window manager
 xcompmgr -c &
