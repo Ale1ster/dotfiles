@@ -1,8 +1,8 @@
-### Settings
-##General
+##>> Settings
+#> General
 set n-completion-items				19
 set guioptions						"s"
-##Completion
+#> Completion
 #completion-fg: "#DDDDDD" | "#606060" | "#808080"
 set completion-bg					"#232323"
 set completion-fg					"#707070"
@@ -10,7 +10,7 @@ set completion-group-bg				"#C0C0C0"
 set completion-group-fg				"#DEDEDE"
 set completion-highlight-bg			"#336600"
 set completion-highlight-fg			"#232323"
-##Colors
+#> Colors
 #NOTE: Where are 'default-bg' and 'default-fg' used? They don't seem to have any effect on pdfs.
 #set default-bg						"#000000"
 #set default-fg						"#DDDDDD"
@@ -22,35 +22,35 @@ set notification-warning-bg			"#101010"
 set notification-warning-fg			"#FFF712"
 set notification-error-bg			"#101010"
 set notification-error-fg			"#FF1212"
-##Status bar
+#> Status bar
 #statusbar-bg: "#280000"
 set statusbar-bg					"#200000"
 set statusbar-fg					"#FFFFFF"
 set statusbar-h-padding				2
 set statusbar-v-padding				0
-##Tabs (These seem to have no effect on lappy) :: I think it has sth to do with 'tabbed' not installed.
+#> Tabs (These seem to have no effect) :: I think it has sth to do with 'tabbed'. zathura has to be reparented in tabbed window...
 set tabbar-bg						"#000000"
 set tabbar-fg						"#FFFFFF"
-set tabbar-focus-bg					"#787878"
+set tabbar-focus-bg					"#3F3F3F"
 set tabbar-focus-fg					"#9FBC00"
-##Scrollbars
+#> Scrollbars
 set show-scrollbars					false
 set show-h-scrollbar				false
 set show-v-scrollbar				false
-##System
+#> System
 set page-cache-size					15
-##Selection
+#> Selection
 set selection-clipboard				"clipboard"
-##Navigation
+#> Navigation
 set advance-pages-per-row			false
-##Search
+#> Search
 set abort-clear-search				true
 set incremental-search				true
 set highlight-color					"#909090"
 set highlight-active-color			"#006600"
 set highlight-transparency			0.5
 set search-hadjust					false
-##Files
+#> Files
 set window-title-basename			true
 set window-title-page				true
 set statusbar-basename				false
@@ -59,46 +59,46 @@ set page-padding					4
 set pages-per-row					1
 #first-page-colume \in [1..pages-per-row]
 set first-page-column				1
-##Recoloring
+#> Recoloring
 set recolor							false
 set recolor-keephue					true
 set recolor-darkcolor				"#B0B0B0"
 set recolor-lightcolor				"#000000"
-##Rendering
+#> Rendering
 #render-loading-bg: "#200000"
 set render-loading					true
 set render-loading-bg				"#000000"
 set render-loading-fg				"#FFFFFF"
 set font							"Monaco normal 8"
-##Scrolling
+#> Scrolling
 set scroll-hstep					-1
 set scroll-step						40
 set scroll-full-overlap				0.1
 set scroll-wrap						false
 set scroll-page-aware				true
-##Links
+#> Links
 set link-zoom						false
 set link-hadjust					false
-##Zoom (max and min are in percentages, so max is 10x and min 0.1x)
+#> Zoom (max and min are in percentages, so max is 10x and min 0.1x)
 set zoom-center						true
 set zoom-max						1000
 set zoom-min						10
 set zoom-step						5
-##Various
+#> Various
 set exec-command					""
-##GUI (These have no meaning in a tiling window manager :)
+#> GUI (These have no meaning in a tiling window manager :)
 #set window-height					600
 #set window-width					800
 
-### Mappings (modes: normal, fullscreen, index)
-##Quit
+##>> Mappings (modes: normal, fullscreen, index)
+#> Quit
 map		[normal]		q			quit
 map		[fullscreen]	q			quit
 map		[index]			q			quit
 map		[normal]		Q			quit
 map		[fullscreen]	Q			quit
 map		[index]			Q			quit
-##Mode toggling (normal, index, fullscreen, multiple-page-view), {input,status}bar toggling
+#> Mode toggling (normal, index, fullscreen, multiple-page-view), {input,status}bar toggling
 map		[normal]		<C-c>		abort
 map		[fullscreen]	<C-c>		abort
 map		[index]			<C-c>		abort
@@ -120,7 +120,7 @@ map		[normal]		<C-m>		toggle_inputbar
 map		[index]			<C-m>		toggle_inputbar
 map		[normal]		<C-n>		toggle_statusbar
 map		[index]			<C-n>		toggle_statusbar
-##Page adjustment (best-fit or width), rotate
+#> Page adjustment (best-fit or width), rotate
 map		[normal]		b			adjust_window best-fit
 map		[fullscreen]	b			adjust_window best-fit
 map		[normal]		w			adjust_window width
@@ -130,12 +130,12 @@ unmap	[normal]		s
 unmap	[normal]		R
 map		[normal]		Rr			rotate rotate-cw
 map		[normal]		Rl			rotate rotate-ccw
-##Input
+#> Input
 map		[normal]		:			focus_inputbar ":"
 map		[index]			:			focus_inputbar ":"
 map		[normal]		;			focus_inputbar ":"
 map		[index]			;			focus_inputbar ":"
-##Search
+#> Search
 map		[normal]		/			focus_inputbar "/"
 map		[fullscreen]	/			focus_inputbar "/"
 map		[normal]		?			focus_inputbar "?"
@@ -149,24 +149,24 @@ map		[normal]		N			search backward
 map		[fullscreen]	N			search backward
 map		[normal]		p			search backward
 map		[fullscreen]	p			search backward
-##Links
+#> Links
 map		[normal]		f			follow
 map		[fullscreen]	f			follow
 map		[normal]		F			display_link
 map		[fullscreen]	F			display_link
-##Jumping
-map		[normal]		gg			goto top
-map		[fullscreen]	gg			goto top
-#Couldn't find how to work this out. When I bind "g", it ignores "gg", taking it as 2 consecutive goto commands!
-#map		[normal]		g		goto
-#map		[fullscreen]	g		goto
+#> Jumping
+map		[normal]		"^gg$"		goto top
+map		[fullscreen]	"^gg$"		goto top
+#"gg" binding is ok; the goto n-th page isn't... zathura doesn't do the nice things jumanji does (bmap), so it does no parsing of the buffer regex...
+#map		[normal]		"$[0-9]+gg$"		goto specific
+#map		[fullscreen]	"$[0-9]+gg$"		goto specific '%s'
 map		[normal]		G			goto bottom
 map		[fullscreen]	G			goto bottom
 map		[normal]		<C-i>		jumplist forward
 map		[fullscreen]	<C-i>		jumplist forward
 map		[normal]		<C-o>		jumplist backward
 map		[fullscreen]	<C-o>		jumplist backward
-##Navigation
+#> Navigation
 map		[normal]		K			navigate previous
 map		[fullscreen]	K			navigate previous
 map		[normal]		J			navigate next
@@ -201,19 +201,19 @@ map		[index]			<Left>		navigate_index collapse
 map		[index]			<Right>		navigate_index expand
 map		[index]			<Space>		navigate_index select
 map		[index]			<Return>	navigate_index select
-##Printing
+#> Printing
 map		[normal]		<C-p>		print
 map		[fullscreen]	<C-p>		print
 map		[index]			<C-p>		print
-##Reloading
+#> Reloading
 map		[normal]		.			reload
 map		[fullscreen]	.			reload
 map		[index]			.			reload
-##Recolor
+#> Recolor
 map		[normal]		r			recolor
 map		[fullscreen]	r			recolor
 map		[index]			r			recolor
-##Scrolling
+#> Scrolling
 map		[normal]		k			scroll up
 map		[normal]		j			scroll down
 map		[normal]		h			scroll left
@@ -232,7 +232,7 @@ map		[normal]		<C-d>		scroll half-down
 map		[normal]		<C-u>		scroll half-up
 map		[normal]		<Space>		scroll full-down
 map		[normal]		<S-Space>	scroll full-up
-##Zooming
+#> Zooming
 map		[normal]		+			zoom in
 map		[fullscreen]	+			zoom in
 map		[normal]		-			zoom out
