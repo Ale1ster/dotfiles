@@ -101,7 +101,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 	, ((modMask .|. shiftMask, xK_l), spawn "i3lock -n -i ~/Pictures/screensaver.png")
 	, ((modMask, xK_p), spawn "dmenu_run")
 	, ((modMask, xK_f), spawn "firefox > /dev/null")
-	, ((modMask, xK_c), spawn "chromium > /dev/null")
+--	, ((modMask, xK_c), spawn "chromium > /dev/null")
 	, ((modMask, xK_s), spawn "zsh -c \"xhost +local: && su skype -c 'nohup /usr/bin/skype &'\"")
 	, ((0, xK_Print), spawn "scrot -e 'mv $f ~/Pictures/Screenshots'")
 	, ((modMask .|. shiftMask, xK_backslash), spawn (myTerminal ++ "-T ncmpcpp -e ncmpcpp"))
@@ -145,7 +145,7 @@ myManageHook	= manageDocks <+> myFloatHook <+> myScratchpadManageHook <+> myName
 myFloatHook		= composeAll
 	[ className =? "Firefox"	-->	moveToWeb
 --	, className =? "Firefox"	-->	unfloat
-	, className =? "Chromium"	-->	moveToWeb
+--	, className =? "Chromium"	-->	moveToWeb
 --	, className =? "Chromium"	-->	unfloat
 	, className =? "Skype"		-->	moveToIM
 --	, className =? "Skype"		-->	unfloat
