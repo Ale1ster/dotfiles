@@ -173,8 +173,8 @@ source $zshore_dir/libraries/completions.zsh
 ## ==== ENVIRONMENT ====
 
 export EDITOR="vim"
-export PAGER="less -R"
-export LESS="-isCM"
+export PAGER="less --RAW-CONTROL-CHARS"													#"-R"
+export LESS="--ignore-case --squeeze-blank-lines --clear-screen --LONG-PROMPT --tabs=4" #"-isCMx4"
 export MANPAGER="less"
 
 ## ==== ALIASES and FUNCTIONS ====
