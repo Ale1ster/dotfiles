@@ -5,6 +5,7 @@
 [core]
 	editor = vim
 	autocrlf = false
+	pager = less -iscMRx5,9
 [user]
 	email = spiritual.dragon.of.ra@gmail.com
 	name = Aristoteles Panaras
