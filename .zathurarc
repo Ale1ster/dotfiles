@@ -1,4 +1,10 @@
 ##>> Settings
+##TODO:
+## synctex: check support. Why does the rcfile option seemingly have no effect?
+## the input buffer borders and completion separator are a different color (and it's not configurable).
+## same for the index mode background. You can't see which object is selected anymore.
+## again in index mode, the vertical scrollbar appears...
+## jumplist-size is not accepted, generating a warning.		==> Should be fixed in develop branch, but can't update atm. Something is up with pip procedures during install.
 #> General
 set n-completion-items				19
 set guioptions						"s"
@@ -38,14 +44,21 @@ set show-scrollbars					false
 set show-h-scrollbar				false
 set show-v-scrollbar				false
 #> System
+set show-hidden						false
+set show-directories				true
 set page-cache-size					15
+set database						"plain"
+set dbus-service					true
+##TODO: Not sure it works atm... Will check source.
+#set synctex							true	
 #> Selection
 set selection-clipboard				"clipboard"
 #> Navigation
 set advance-pages-per-row			false
 #> Search
 set abort-clear-search				true
-set incremental-search				true
+set incremental-search				false
+set nohlsearch						false
 set highlight-color					"#909090"
 set highlight-active-color			"#006600"
 set highlight-transparency			0.5
@@ -55,9 +68,10 @@ set window-title-basename			true
 set window-title-page				true
 set statusbar-basename				false
 set adjust-open						"best-fit"
+set open-first-page					false
 set page-padding					4
 set pages-per-row					1
-#first-page-colume \in [1..pages-per-row]
+#first-page-column in [1..pages-per-row]
 set first-page-column				1
 #> Recoloring
 set recolor							false
@@ -71,11 +85,13 @@ set render-loading-bg				"#000000"
 set render-loading-fg				"#FFFFFF"
 set font							"Monaco normal 8"
 #> Scrolling
-set scroll-hstep					-1
+set scroll-hstep					40
 set scroll-step						40
 set scroll-full-overlap				0.1
 set scroll-wrap						false
 set scroll-page-aware				true
+#> Jumplist (NEW: This fails on load for now...)
+#set jumplist-size					2000
 #> Links
 set link-zoom						false
 set link-hadjust					false
@@ -90,36 +106,43 @@ set exec-command					""
 #set window-height					600
 #set window-width					800
 
-##>> Mappings (modes: normal, fullscreen, index)
+##>> Mappings (modes: normal, fullscreen, presentation, index). We do not touch insert mode...
 #> Quit
 map		[normal]		q			quit
 map		[fullscreen]	q			quit
+map		[presentation]	q			quit
 map		[index]			q			quit
 map		[normal]		Q			quit
 map		[fullscreen]	Q			quit
+map		[presentation]	Q			quit
 map		[index]			Q			quit
-#> Mode toggling (normal, index, fullscreen, multiple-page-view), {input,status}bar toggling
+#> Mode toggling (normal, index, fullscreen, presentation, multiple-page-view), {input,status}bar toggling
 map		[normal]		<C-c>		abort
 map		[fullscreen]	<C-c>		abort
+map		[presentation]	<C-c>		abort
 map		[index]			<C-c>		abort
-unmap	[normal]		d
-map		[normal]		D			toggle_page_mode
+map		[normal]		<Esc>		abort
+map		[fullscreen]	<Esc>		abort
+map		[presentation]	<Esc>		abort
+map		[index]			<Esc>		abort
 map		[normal]		<Tab>		toggle_index
 map		[fullscreen]	<Tab>		toggle_index
+map		[presentation]	<Tab>		toggle_index
 map		[index]			<Tab>		toggle_index
-#TODO: Still no fullscreen!!!! :: Trying to bind something to toggle_fullscreen in any mode, doesn't work!
-#unmap	[normal]		<Esc>
-#unmap	[fullscreen]	<Esc>
-#unmap	[index]			<Esc>
-#map		[normal]		<Esc>		toggle_fullscreen
-#map		[fullscreen]	<Esc>		toggle_fullscreen
-#map		[index]			<Esc>		toggle_fullscreen
-#unmap	[normal]		<F5>
-#unmap	[fullscreen]	<F5>
+map		[normal]		<F11>		toggle_fullscreen
+map		[fullscreen]	<F11>		toggle_fullscreen
+map		[presentation]	<F11>		toggle_fullscreen
+map		[index]			<F11>		toggle_fullscreen
+map		[normal]		<F5>		toggle_presentation
+map		[fullscreen]	<F5>		toggle_presentation
+map		[presentation]	<F5>		toggle_presentation
+map		[index]			<F5>		toggle_presentation
 map		[normal]		<C-m>		toggle_inputbar
 map		[index]			<C-m>		toggle_inputbar
 map		[normal]		<C-n>		toggle_statusbar
 map		[index]			<C-n>		toggle_statusbar
+map		[normal]		D			toggle_page_mode
+unmap	[normal]		d
 #> Page adjustment (best-fit or width), rotate
 map		[normal]		b			adjust_window best-fit
 map		[fullscreen]	b			adjust_window best-fit
@@ -131,35 +154,45 @@ unmap	[normal]		R
 map		[normal]		Rr			rotate rotate-cw
 map		[normal]		Rl			rotate rotate-ccw
 #> Input
-map		[normal]		:			focus_inputbar ":"
-map		[index]			:			focus_inputbar ":"
-map		[normal]		;			focus_inputbar ":"
-map		[index]			;			focus_inputbar ":"
+map		[normal]		":"			focus_inputbar ":"
+map		[index]			":"			focus_inputbar ":"
+map		[normal]		";"			focus_inputbar ":"
+map		[index]			";"			focus_inputbar ":"
+map		[normal]		iv			focus_inputbar ":version"
+map		[normal]		ii			focus_inputbar ":info"
+map		[normal]		ih			focus_inputbar ":help"
+map		[normal]		io			focus_inputbar ":open "
+map		[normal]		ix			focus_inputbar ":close"
+map		[normal]		iq			focus_inputbar ":quit"
+map		[normal]		im			focus_inputbar ":bmark "
+map		[normal]		"i'"		focus_inputbar ":blist "
+map		[normal]		id			focus_inputbar ":bdelete "
+map		[normal]		iw			focus_inputbar ":write "
+map		[normal]		"iWw!"		focus_inputbar ":write! "
+map		[normal]		iexport		focus_inputbar ":export "
 #> Search
-map		[normal]		/			focus_inputbar "/"
-map		[fullscreen]	/			focus_inputbar "/"
-map		[normal]		?			focus_inputbar "?"
-map		[fullscreen]	?			focus_inputbar "?"
-map		[normal]		,			set nohlsearch
-map		[fullscreen]	,			set nohlsearch
-map		[index]			,			set nohlsearch
+map		[normal]		"/"			focus_inputbar "/"
+map		[fullscreen]	"/"			focus_inputbar "/"
+map		[normal]		"?"			focus_inputbar "?"
+map		[fullscreen]	"?"			focus_inputbar "?"
 map		[normal]		n			search forward
 map		[fullscreen]	n			search forward
 map		[normal]		N			search backward
 map		[fullscreen]	N			search backward
 map		[normal]		p			search backward
 map		[fullscreen]	p			search backward
+map		[normal]		sh			set nohlsearch false
+map		[normal]		sn			set nohlsearch true
+#map		[normal]		,,			focus_inputbar ":nohlsearch"
+#map		[normal]		,.			focus_inputbar ":hlsearch"
 #> Links
 map		[normal]		f			follow
 map		[fullscreen]	f			follow
 map		[normal]		F			display_link
 map		[fullscreen]	F			display_link
 #> Jumping
-map		[normal]		"^gg$"		goto top
-map		[fullscreen]	"^gg$"		goto top
-#"gg" binding is ok; the goto n-th page isn't... zathura doesn't do the nice things jumanji does (bmap), so it does no parsing of the buffer regex...
-#map		[normal]		"$[0-9]+gg$"		goto specific
-#map		[fullscreen]	"$[0-9]+gg$"		goto specific '%s'
+map		[normal]		gg			goto top
+map		[fullscreen]	gg			goto top
 map		[normal]		G			goto bottom
 map		[fullscreen]	G			goto bottom
 map		[normal]		<C-i>		jumplist forward
@@ -169,22 +202,35 @@ map		[fullscreen]	<C-o>		jumplist backward
 #> Navigation
 map		[normal]		K			navigate previous
 map		[fullscreen]	K			navigate previous
+map		[presentation]	K			navigate previous
 map		[normal]		J			navigate next
 map		[fullscreen]	J			navigate next
+map		[presentation]	J			navigate next
 map		[normal]		<PageUp>	navigate previous
 map		[fullscreen]	<PageUp>	navigate previous
+map		[presentation]	<PageUp>	navigate previous
 map		[normal]		<PageDown>	navigate next
 map		[fullscreen]	<PageDown>	navigate next
+map		[presentation]	<PageDown>	navigate next
 map		[normal]		<Space>		navigate next
 map		[fullscreen]	<Space>		navigate next
+map		[presentation]	<Space>		navigate next
 map		[normal]		<S-Space>	navigate previous
 map		[fullscreen]	<S-Space>	navigate previous
+map		[presentation]	<S-Space>	navigate previous
 map		[normal]		<BackSpace>	navigate previous
 map		[fullscreen]	<BackSpace>	navigate previous
+map		[presentation]	<BackSpace>	navigate previous
+map		[normal]		<C-j>		bisect forward
+map		[normal]		<C-k>		bisect backward
 map		[fullscreen]	<Up>		navigate previous
 map		[fullscreen]	<Left>		navigate previous
 map		[fullscreen]	<Down>		navigate next
 map		[fullscreen]	<Right>		navigate next
+map		[presentation]	<Up>		navigate previous
+map		[presentation]	<Left>		navigate previous
+map		[presentation]	<Down>		navigate next
+map		[presentation]	<Right>		navigate next
 map		[index]			k			navigate_index up
 map		[index]			j			navigate_index down
 map		[index]			h			navigate_index collapse
@@ -199,21 +245,14 @@ map		[index]			<Up>		navigate_index up
 map		[index]			<Down>		navigate_index down
 map		[index]			<Left>		navigate_index collapse
 map		[index]			<Right>		navigate_index expand
+map		[index]			t			navigate_index toggle
 map		[index]			<Space>		navigate_index select
 map		[index]			<Return>	navigate_index select
-#> Printing
-map		[normal]		<C-p>		print
-map		[fullscreen]	<C-p>		print
-map		[index]			<C-p>		print
-#> Reloading
-map		[normal]		.			reload
-map		[fullscreen]	.			reload
-map		[index]			.			reload
-#> Recolor
-map		[normal]		r			recolor
-map		[fullscreen]	r			recolor
-map		[index]			r			recolor
+map		[index]			gg			navigate_index top
+map		[index]			G			navigate_index bottom
 #> Scrolling
+map		[normal]		H			scroll page-top
+map		[normal]		L			scroll page-bottom
 map		[normal]		k			scroll up
 map		[normal]		j			scroll down
 map		[normal]		h			scroll left
@@ -226,22 +265,39 @@ map		[normal]		t			scroll full-left
 map		[normal]		y			scroll full-right
 map		[normal]		d			scroll full-down
 map		[normal]		u			scroll full-up
+unmap	[normal]		<C-f>
+unmap	[normal]		<C-b>
 map		[normal]		<C-t>		scroll half-left
 map		[normal]		<C-y>		scroll half-right
 map		[normal]		<C-d>		scroll half-down
 map		[normal]		<C-u>		scroll half-up
 map		[normal]		<Space>		scroll full-down
 map		[normal]		<S-Space>	scroll full-up
+#> Printing
+map		[normal]		<C-p>		print
+map		[fullscreen]	<C-p>		print
+map		[index]			<C-p>		print
+#> Reloading
+map		[normal]		"."			reload
+map		[fullscreen]	"."			reload
+map		[index]			"."			reload
+unmap	[normal]		R
+#> Recolor
+map		[normal]		r			recolor
+map		[fullscreen]	r			recolor
+map		[index]			r			recolor
 #> Zooming
-map		[normal]		+			zoom in
-map		[fullscreen]	+			zoom in
-map		[normal]		-			zoom out
-map		[fullscreen]	-			zoom out
+map		[normal]		"+"			zoom in
+map		[fullscreen]	"+"			zoom in
+map		[normal]		"-"			zoom out
+map		[fullscreen]	"-"			zoom out
+map		[normal]		"="			zoom specific
+map		[fullscreen]	"="			zoom specific
 map		[normal]		zi			zoom in
 map		[fullscreen]	zi			zoom in
 map		[normal]		zo			zoom out
 map		[fullscreen]	zo			zoom out
-#map	[normal]		z0			zoom original
+#map(normal, z0) : zoom original (The argument should be ZOOM_ORIGINAL, but it has no name binding)
 map		[normal]		z0			zoom default
 map		[fullscreen]	z0			zoom default
 map		[normal]		zz			zoom specific
