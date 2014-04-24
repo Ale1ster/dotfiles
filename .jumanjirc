@@ -18,10 +18,10 @@ set focus-new-tabs					false
 set enable-caret-browsing			false
 set enable-private-browsing			false
 #> Search Engines
-searchengine g						http://www.google.com/search?q=%s
-searchengine y						http://www.youtube.com/results?search_query=%s
-searchengine w						http://en.wikipedia.org/w/index.php?search=%s
-searchengine aw						https://wiki.archlinux.org/index.php?search=%s
+searchengine g						"http://www.google.com/search?q=%s"
+searchengine y						"http://www.youtube.com/results?search_query=%s"
+searchengine w						"http://en.wikipedia.org/w/index.php?search=%s"
+searchengine aw						"https://wiki.archlinux.org/index.php?search=%s"
 #> Webkit General
 #enable-developer-extras (enables webkit WebInspector)
 set enable-developer-extras			false
