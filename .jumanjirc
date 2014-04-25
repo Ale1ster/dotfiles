@@ -1,9 +1,12 @@
 ##>> Settings
 #@TODO:
-#@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js
-#@ fix tabbar font size
-#@ user-stylesheet-uri: find a proper one and take it
 #@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper
+#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)
+#@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
+#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c
+#@ selection clipboard customization
+#@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js
+#@ user-stylesheet-uri: find a proper one and take it
 #> General
 set n-completion-items				19
 set guioptions						"s"
@@ -70,7 +73,7 @@ set default-encoding				"utf-8"
 #font: "monospace normal 7.5"
 set font							"Monaco normal 7.5"
 set default-font-family				"sans-serif"
-set default-font-size				8
+set default-font-size				12
 set cursive-font-family				"serif"
 set fantasy-font-family				"serif"
 set serif-font-family				"serif"
@@ -106,6 +109,7 @@ set enable-spell-checking			false
 set spell-checking-languages		""
 #> External
 set download-dir					"~/Downloads/"
+#download-command: ""	#If used as empty, a webkit widget is created to add the download.
 set download-command				"xterm -e sh -c \"wget --load-cookies ~/.local/share/jumanji/cookies '%s' -O '%s'\""
 #> Allowed plugins - deprecated (identified by MIME type: for more see /etc/mime.types)
 #plugin								"application/x-shockwave-flash"
@@ -127,6 +131,130 @@ set download-command				"xterm -e sh -c \"wget --load-cookies ~/.local/share/jum
 
 
 ###>> Mappings
+map		[normal]		<C-q>		quit
+map		[normal]		gh			goto_homepage
+map		[normal]		gH			goto_homepage tab
+map		[normal]		gu			goto_parent_dir
+map		[normal]		gU			goto_parent_dir default
+map		[normal]		"/"			focus_inputbar "/"
+map		[normal]		"?"			focus_inputbar "?"
+map		[normal]		":"			focus_inputbar ":"
+map		[normal]		";"			focus_inputbar ":"
+map		[normal]		o			focus_inputbar ":open "
+map		[normal]		O			focus_inputbar append_url ":open "
+map		[normal]		t			focus_inputbar ":tabopen "
+map		[normal]		T			focus_inputbar append_url ":tabopen "
+map		[normal]		w			focus_inputbar ":winopen "
+map		[normal]		W			focus_inputbar append_url ":winopen"
+unmap	[normal]		<C-i>
+unmap	[normal]		<C-o>
+map		[normal]		H			navigate_history previous
+map		[normal]		L			navigate_history next
+##TODO: put bindings not functional atm
+#map		[normal]		p			put
+#map		[normal]		P			put tab
+map		[normal]		r			reload
+map		[normal]		R			reload no_cache
+map		[normal]		u			restore
+map		[normal]		<C-T>		restore
+map		[normal]		k			scroll up
+map		[normal]		j			scroll down
+map		[normal]		h			scroll left
+map		[normal]		l			scroll right
+map		[normal]		<Up>		scroll up
+map		[normal]		<Down>		scroll down
+map		[normal]		<Left>		scroll left
+map		[normal]		<Right>		scroll right
+map		[normal]		d			scroll half_down
+map		[normal]		u			scroll half_up
+map		[normal]		D			scroll full_down
+map		[normal]		U			scroll full_up
+map		[normal]		<Space>		scroll full_down
+map		[normal]		<S-Space>	scroll full_up
+unmap	[normal]		<C-d>
+unmap	[normal]		<C-u>
+unmap	[normal]		<C-f>
+unmap	[normal]		<C-b>
+map		[normal]		gg			scroll top
+map		[normal]		G			scroll bottom
+#TODO: scroll begin,end bindings also non-functional
+#map		[normal]		"^"			scroll begin
+#map		[normal]		"$"			scroll end
+map		[normal]		sp			proxy
+unmap	[normal]		<C-p>
+map		[normal]		ss			show_source
+unmap	[normal]		g
+map		[normal]		sl			plugins
+map		[normal]		st			user_stylesheet
+unmap	[normal]		e
+map		[normal]		"+"			zoom in
+map		[normal]		"-"			zoom out
+map		[normal]		"="			zoom specific
+map		[normal]		zi			zoom in
+map		[normal]		zo			zoom out
+map		[normal]		z0			zoom default
+map		[normal]		zz			zoom specific
+map		[normal]		Z			zoom specific
+map		[normal]		yy			yank
+unmap	[normal]		y
+
+
+#====SHORTCUT_MAPPINGS====
+#quit
+#goto_homepage
+#goto_parent_dir
+#focus_inputbar
+#navigate_history
+#put
+#reload
+#restore
+#scroll
+#show_source
+#proxy
+#plugins
+#user_stylesheet
+#yank
+#zoom
+#====ARGUMENT_MAPPINGS====
+#default
+#tab
+#append_url
+#previous
+#next
+#no_cache
+#begin
+#end
+#top
+#bottom
+#up
+#down
+#full_down
+#full_up
+#half_down
+#half_up
+#left
+#right
+#in
+#out
+#specific
+#====INPUTBAR_SHORTCUTS====
+#open
+#tabopen
+#winopen
+#----------------
+#bmark
+#delbmarks
+#delmarks
+#qmark
+#delqmarks
+#downloads
+#mark
+#print
+#stop
+#sessionsave
+#sessionload
+
+
 ##> Mode toggling
 ##map			<C-c>			abort		[all]
 ##map			<C-d>			abort		insert
