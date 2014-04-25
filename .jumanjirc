@@ -1,12 +1,26 @@
 ##>> Settings
 #@TODO:
-#@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper
-#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)
-#@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
-#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c
-#@ selection clipboard customization
 #@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js
-#@ user-stylesheet-uri: find a proper one and take it
+#@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
+#@
+#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	--> TODO
+#@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper													==> Committed
+#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c															==> Committed
+#@ user-stylesheet-uri: find a proper one and take it																											==> Configuration matter
+#@ selection clipboard customization																															==> Committed
+#@ fix typos in whole source tree (close-window-with-last-tab setting in config.c is misaligned; do not forget)
+
+#map ia close
+#map ib search forwards
+#map ic search backwards
+#map id bookmark
+#map ie hints
+#map if tab_navigate next
+#map ig tab_navigate previous
+#map ih mark_add
+#map ii mark_eval
+#set default-clipboard selection
+
 #> General
 set n-completion-items				19
 set guioptions						"s"
@@ -150,9 +164,8 @@ unmap	[normal]		<C-i>
 unmap	[normal]		<C-o>
 map		[normal]		H			navigate_history previous
 map		[normal]		L			navigate_history next
-##TODO: put bindings not functional atm
-#map		[normal]		p			put
-#map		[normal]		P			put tab
+map		[normal]		p			put
+map		[normal]		P			put tab
 map		[normal]		r			reload
 map		[normal]		R			reload no_cache
 map		[normal]		u			restore
