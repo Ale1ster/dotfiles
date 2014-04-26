@@ -106,9 +106,10 @@ alias reboot='sudo reboot'
 alias sup='sudo pacmatic -Syu'
 alias sus='sudo pacmatic -S'
 alias sua='yaourt -S'
-alias info='pacman -Si'
-alias linfo='pacman -Qi'
+alias pacinfo='pacman -Si'
+alias paclinfo='pacman -Qi'
 alias pacfiles='pacman -Ql'
+alias pacown='pacman -Qo'
 # languages
 alias bf='brainfuck'
 # games
@@ -116,7 +117,6 @@ alias nh='nethack'
 alias ts='typespeed'
 alias 2048='bash2048'
 alias dvor='learn'		#'dvorak7min'
-
 # suffixes
 alias -s c=vim
 alias -s h=vim
