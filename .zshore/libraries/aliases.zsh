@@ -26,6 +26,8 @@ alias l='ls'
 alias la='ls -A'
 alias ll='ls -AlFh'
 alias sl='ls'
+# search
+alias ngrep='GREP_OPTIONS="--binary-files=without-match --line-number --color=auto" grep'
 # tree
 alias t='tree'
 alias ta='tree -aF --noreport'
