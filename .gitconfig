@@ -13,3 +13,6 @@
 	tree = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --all --abbrev-commit --date=relative
 [push]
 	default = simple
+[filter "ignorelines"]
+	clean = "sed '/#git_ignore_line_in_repo$/'d"
+	smudge = cat
