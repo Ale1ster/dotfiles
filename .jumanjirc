@@ -2,13 +2,13 @@
 #@TODO:
 #@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
 #@
-#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	--> TODO
-#@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper													==> Committed
+#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	--> TODO					==> WRITTEN (but wrong)
+#@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper													==> Committed				==> WRITTEN
 #@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js														==> Configuration matter
-#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c															==> Committed
+#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c															==> Committed				==> WRITTEN
 #@ user-stylesheet-uri: find a proper one and take it																											==> Configuration matter
-#@ selection clipboard customization																															==> Committed
-#@ fix typos in whole source tree																																==> Committed
+#@ selection clipboard customization																															==> Committed				==> WRITTEN
+#@ fix typos in whole source tree																																==> Committed				==> WRITTEN
 
 #map ia close
 #map ib search forwards
