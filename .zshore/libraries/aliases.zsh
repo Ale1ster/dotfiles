@@ -32,16 +32,12 @@ alias ngrep='GREP_OPTIONS="--binary-files=without-match --line-number --color=au
 alias t='tree'
 alias ta='tree -aF --noreport'
 alias tap='tree -apF --noreport'
-# cd - autojump
+# cd - fasd (https://github.com/clvv/fasd)
 alias p='pushd'
 alias o='popd'
 alias c='cd'
 alias dv='dirs -v'
 alias dsc='dirs -c'		# For directory stack clear
-alias j='j'
-alias jc='jc'
-alias jp='autojump --purge'
-alias jl='autojump --stat'
 # rm
 alias rd='rmdir'
 alias rmd='rm -r'

@@ -36,6 +36,15 @@ setopt $zshore_opts
 # Colors
 autoload -Uz colors && colors -i
 
+# fasd
+#eval "$(fasd --init zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install)"
+fasd_cache="$zshore_dir/.internals/fasd_init_cached"
+if [ "$(command -v fasd)" -nt "$fasd_cache" -o ! -s "$fasd_cache" ]; then
+	fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install zsh-wcomp zsh-wcomp-install >! "$fasd_cache"
+fi
+source "$fasd_cache"
+unset fasd_cache
+
 # Ignore _* patterns during completion (typically used as completion function names)
 CORRECT_IGNORE="_*"
 # Editor for fc builtin
