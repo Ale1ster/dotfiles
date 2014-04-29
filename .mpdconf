@@ -239,7 +239,7 @@ audio_output {
 	host		"unbearable_proxy.mooo.com"
 	port		"8000"
 	mount		"/laptop_mpd.ogg"
-	password	"TODO:SOURCE_PASSWORD"
+#	password	"TODO:SOURCE_PASSWORD"
 #	quality		"5.0"
 	bitrate		"128"
 	format		"44100:16:2"
