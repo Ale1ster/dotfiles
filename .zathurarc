@@ -1,7 +1,7 @@
 ##>> Settings
 #@TODO:
 #@ synctex: check support. Why does the rcfile option seemingly have no effect?
-#@ the input buffer borders and completion separator are a different color (and it's not configurable).
+#@ the input buffer borders and completion separator are a different color (and it's not configurable).	==> Seems to be a side-effect of switching to gtk3...
 #> General
 set n-completion-items				19
 set guioptions						"s"
