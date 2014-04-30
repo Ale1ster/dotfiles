@@ -1,29 +1,16 @@
 ##>> Settings
 #@TODO:
 #@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
-#@
 #@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	--> TODO					==> WRITTEN (but wrong)
-#@ resizeable-text-areas: not passed if proper from jumanji to webkit, and not recognized if passed as improper													==> Committed				==> WRITTEN
-#@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js														==> Configuration matter
-#@ add shortcut mappings for the following functions: the ones that are not commented out in config.c															==> Committed				==> WRITTEN
-#@ user-stylesheet-uri: find a proper one and take it																											==> Configuration matter
-#@ selection clipboard customization																															==> Committed				==> WRITTEN
-#@ fix typos in whole source tree																																==> Committed				==> WRITTEN
-
-#map ia close
-#map ib search forwards
-#map ic search backwards
-#map id bookmark
-#map ie hints
-#map if tab_navigate next
-#map ig tab_navigate previous
-#map ih mark_add
-#map ii mark_eval
-#set default-clipboard selection
+#@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js
+#@ user-stylesheet-uri: find a proper one and take it
+#@ sc_toggle_bookmark: ( Gtk-WARNING **: Failed to set text from markup due to error parsing markup: Error on line 1: Entity did not end with a semicolon; most likely you used an ampersand character without intending to start an entity - escape ampersand as &amp;) ==> I think it has something to do with not properly escaping the passed uri.
+#@ sc_quimark_{add,evaluate} do not work
 
 #> General
 set n-completion-items				19
 set guioptions						"s"
+set default-clipboard				"clipboard"
 set user-agent						""
 set homepage						"http://google.com/"
 set adblock							true
@@ -39,8 +26,7 @@ searchengine g						"http://www.google.com/search?q=%s"
 searchengine y						"http://www.youtube.com/results?search_query=%s"
 searchengine w						"http://en.wikipedia.org/w/index.php?search=%s"
 searchengine aw						"https://wiki.archlinux.org/index.php?search=%s"
-#> Webkit General
-#enable-developer-extras (enables webkit WebInspector)
+#> Webkit General	(enable-developer-extras: (enables webkit WebInspector))
 set enable-developer-extras			false
 #> Proxy (privoxy, used basically for adblocking; that was in the olden days...)
 set auto-set-proxy					true
@@ -99,7 +85,7 @@ set minimum-font-size				5
 #> Zooming
 set full-content-zoom				true
 set zoom-step						5
-#set resizeable-text-areas			true
+set resizable-text-areas			true
 #> Scollbars
 set show-scrollbars					false
 set show-h-scrollbar				false
@@ -114,8 +100,8 @@ set enable-java-applet				true
 set enable-plugins					true
 set enable-scripts					true
 #> Window (Tiling WM :)
-#set	window-height					600
-#set window-width					800
+set window-height					600
+set window-width					800
 #> Various
 set window-icon						""
 set exec-command					""
@@ -141,17 +127,11 @@ set download-command				"xterm -e sh -c \"wget --load-cookies ~/.local/share/jum
 #set statusbar_ssl_fgcolor			#000000
 #set tabbar_separator_color			#2700B0
 
-
-
-
-###>> Mappings
+##>> Mappings
+#> Quit
 map		[normal]		<C-q>		quit
-map		[normal]		gh			goto_homepage
-map		[normal]		gH			goto_homepage tab
-map		[normal]		gu			goto_parent_dir
-map		[normal]		gU			goto_parent_dir default
-map		[normal]		"/"			focus_inputbar "/"
-map		[normal]		"?"			focus_inputbar "?"
+map		[normal]		Q			quit
+#> Input
 map		[normal]		":"			focus_inputbar ":"
 map		[normal]		";"			focus_inputbar ":"
 map		[normal]		o			focus_inputbar ":open "
@@ -160,16 +140,21 @@ map		[normal]		t			focus_inputbar ":tabopen "
 map		[normal]		T			focus_inputbar append_url ":tabopen "
 map		[normal]		w			focus_inputbar ":winopen "
 map		[normal]		W			focus_inputbar append_url ":winopen"
-unmap	[normal]		<C-i>
-unmap	[normal]		<C-o>
+#TODO: Add more inputbar command shortcuts here...
+#> Search
+map		[normal]		"/"			focus_inputbar "/"
+map		[normal]		"?"			focus_inputbar "?"
+map		[normal]		n			search forward
+map		[normal]		N			search backward
+#> Hinting
+map		[normal]		f			hints
+map		[normal]		F			hints tab
+#> Navigation
 map		[normal]		H			navigate_history previous
 map		[normal]		L			navigate_history next
-map		[normal]		p			put
-map		[normal]		P			put tab
-map		[normal]		r			reload
-map		[normal]		R			reload no_cache
-map		[normal]		u			restore
-map		[normal]		<C-T>		restore
+unmap	[normal]		<C-i>
+unmap	[normal]		<C-o>
+#> Scrolling - Going
 map		[normal]		k			scroll up
 map		[normal]		j			scroll down
 map		[normal]		h			scroll left
@@ -188,18 +173,16 @@ unmap	[normal]		<C-d>
 unmap	[normal]		<C-u>
 unmap	[normal]		<C-f>
 unmap	[normal]		<C-b>
-map		[normal]		gg			scroll top
-map		[normal]		G			scroll bottom
 #TODO: scroll begin,end bindings also non-functional
 #map		[normal]		"^"			scroll begin
 #map		[normal]		"$"			scroll end
-map		[normal]		sp			proxy
-unmap	[normal]		<C-p>
-map		[normal]		ss			show_source
-unmap	[normal]		g
-map		[normal]		sl			plugins
-map		[normal]		st			user_stylesheet
-unmap	[normal]		e
+map		[normal]		gg			scroll top
+map		[normal]		G			scroll bottom
+map		[normal]		gh			goto_homepage
+map		[normal]		gH			goto_homepage tab
+map		[normal]		gu			goto_parent_dir
+map		[normal]		gU			goto_parent_dir default
+#> Zooming
 map		[normal]		"+"			zoom in
 map		[normal]		"-"			zoom out
 map		[normal]		"="			zoom specific
@@ -208,61 +191,45 @@ map		[normal]		zo			zoom out
 map		[normal]		z0			zoom default
 map		[normal]		zz			zoom specific
 map		[normal]		Z			zoom specific
+#> Reloading
+map		[normal]		r			reload
+map		[normal]		R			reload no_cache
+#> Tab operations
+map		[normal]		p			put
+map		[normal]		P			put tab
 map		[normal]		yy			yank
 unmap	[normal]		y
+map		[normal]		<C-j>		tab_navigate next
+map		[normal]		<C-k>		tab_navigate previous
+unmap	[normal]		K
+unmap	[normal]		J
+map		[normal]		<C-Tab>		tab_navigate next
+map		[normal]		<C-d>		close
+unmap	[normal]		d
+map		[normal]		<C-w>		close
+map		[normal]		u			restore
+map		[normal]		<C-T>		restore
+map		[normal]		<C-W>		restore
+#> Toggling (prefixed with 's')
+map		[normal]		sp			proxy
+unmap	[normal]		<C-p>
+map		[normal]		ss			show_source
+unmap	[normal]		g
+map		[normal]		sl			plugins
+map		[normal]		st			user_stylesheet
+unmap	[normal]		e
+#> Marks
+map		[normal]		m			mark_add
+map		[normal]		"\'"		mark_eval
+#TODO: Bookmarks are not properly toggled. Sometimes the uri is not passed, and sometimes it is the uri of the wrong tab...
+map		[normal]		B			bookmark
+unmap	[normal]		A
+#map		[normal]		M			qmark_add
+#map		[normal]		gn			qmark_eval
+#unmap	[normal]		go
+#map		[normal]		gN			qmark_eval tab
 
-
-#====SHORTCUT_MAPPINGS====
-#quit
-#goto_homepage
-#goto_parent_dir
-#focus_inputbar
-#navigate_history
-#put
-#reload
-#restore
-#scroll
-#show_source
-#proxy
-#plugins
-#user_stylesheet
-#yank
-#zoom
-#====ARGUMENT_MAPPINGS====
-#default
-#tab
-#append_url
-#previous
-#next
-#no_cache
-#begin
-#end
-#top
-#bottom
-#up
-#down
-#full_down
-#full_up
-#half_down
-#half_up
-#left
-#right
-#in
-#out
-#specific
-#====INPUTBAR_SHORTCUTS====
-#open
-#tabopen
-#winopen
-#----------------
-#bmark
-#delbmarks
-#delmarks
-#qmark
-#delqmarks
-#downloads
-#mark
-#print
-#stop
-#sessionsave
-#sessionload
+####====FOR TESTING PURPOSES====####
+#map ia qmark_add
+#map ib qmark_eval
+#map ic qmark_eval tab
