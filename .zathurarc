@@ -2,9 +2,6 @@
 #@TODO:
 #@ synctex: check support. Why does the rcfile option seemingly have no effect?
 #@ the input buffer borders and completion separator are a different color (and it's not configurable).
-#@ same for the index mode background. You can't see which object is selected anymore.
-#@ again in index mode, the vertical scrollbar appears...
-#@ jumplist-size is not accepted, generating a warning.		==> Should be fixed in develop branch, but can't update atm. Something is up with pip procedures during install.
 #> General
 set n-completion-items				19
 set guioptions						"s"
@@ -28,6 +25,11 @@ set notification-warning-bg			"#101010"
 set notification-warning-fg			"#FFF712"
 set notification-error-bg			"#101010"
 set notification-error-fg			"#FF1212"
+#> Index colors
+set index-bg						"#404040"
+set index-fg						"#000000"
+set index-active-bg					"#2C682D"
+set index-active-fg					"#000000"
 #> Statusbar
 #statusbar-bg: "#280000"
 set statusbar-bg					"#200000"
@@ -90,8 +92,8 @@ set scroll-step						40
 set scroll-full-overlap				0.1
 set scroll-wrap						false
 set scroll-page-aware				true
-#> Jumplist (NEW: This fails on load for now...)
-#set jumplist-size					2000
+#> Jumplist
+set jumplist-size					2000
 #> Links
 set link-zoom						false
 set link-hadjust					false
