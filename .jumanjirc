@@ -1,11 +1,11 @@
 ##>> Settings
 #@TODO:
+#@ sc_toggle_bookmark: ( Gtk-WARNING **: Failed to set text from markup due to error parsing markup: Error on line 1: Entity did not end with a semicolon; most likely you used an ampersand character without intending to start an entity - escape ampersand as &amp;) ==> I think it has something to do with not properly escaping the passed uri.
+#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	-->	FIXED	==>	COMMITTED
 #@ when closing with <C-q> (at least) and opening the next time, the tabs are not restored in their previous order, and they do not maintain history
-#@ jumanji segfaults when it is with only one tab, close-window-with-last-tab:false and you repeatedly close the tab (noticed it only when the tab is loading)	--> TODO					==> WRITTEN (but wrong)
+#@ jumanji segfaults due to an error during strlen. The relevant info is in the core dump in ~/jumanji_configing/BUGS/...
 #@ scripts: the directory scripts under XDG/jumanji is loaded automatically, and it can't parse hints.js
 #@ user-stylesheet-uri: find a proper one and take it
-#@
-#@ sc_toggle_bookmark: ( Gtk-WARNING **: Failed to set text from markup due to error parsing markup: Error on line 1: Entity did not end with a semicolon; most likely you used an ampersand character without intending to start an entity - escape ampersand as &amp;) ==> I think it has something to do with not properly escaping the passed uri.
 #@ sc_quimark_{add,evaluate} do not work
 
 #> General
