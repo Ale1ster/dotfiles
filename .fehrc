@@ -1,0 +1,3 @@
+#Lines starting with '#' are comments, but do not use comments mid-line.
+
+feh --auto-zoom --borderless --fullscreen --hide-pointer --no-jump-on-resort --recursive --scale-down --verbose --zoom fill
