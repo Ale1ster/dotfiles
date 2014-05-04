@@ -207,7 +207,7 @@ source $zshore_dir/libraries/temps.sh
 ## ==== PLUGINS ====
 
 # Plugins
-plugins=(tmux)
+plugins=()		#(tmux)
 for i in $plugins; do
 	source $zshore_dir/plugins/$i.zsh
 done

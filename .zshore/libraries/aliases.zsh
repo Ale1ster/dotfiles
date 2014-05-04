@@ -46,8 +46,9 @@ alias rf='rm -f'
 alias v='vim'
 alias vi='vim'
 alias vd='vimdiff'
-# tmux
+# terminal multiplexers - emulators
 alias tmux='tmux -2'
+alias fbterm='fbterm -- tmux new-session -As fbterm_ssn'
 # git
 alias g='git'
 alias ga='git add'
