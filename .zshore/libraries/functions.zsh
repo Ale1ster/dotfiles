@@ -1,4 +1,4 @@
-# mkdir and cd there
+# (mkdir, cd) convenience wrapper
 function mcd () {
 	mkdir -p "$1" && cd "$1"
 }
@@ -42,7 +42,7 @@ function play () {
 			*.pls | *.m3u)
 				mplayer -playlist "$1"
 				;;
-			*.mkv | *.avi | *.mp4)
+			*.mkv | *.avi | *.mp4 | *.m4v)
 				mplayer "$1"
 				;;
 			*)
@@ -52,7 +52,7 @@ function play () {
 	fi
 }
 
-# Target setup for X server spawning.
+# target setup for X server spawning.
 function spawnx () {
 	case "$1" in
 		#Target 1: X server with XMonad wm.
