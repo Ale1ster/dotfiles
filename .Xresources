@@ -6,6 +6,9 @@ XTerm*foreground:	white
 XTerm*cursorColor:	grey50
 XTerm*locale:		UTF-8
 XTerm*utf8:			2
+!XTerm*faceName:		DejaVu Mono:style=Regular:size=10
+!xterm*faceName: Liberation Mono:size=8:antialias=false
+!xterm*font: 7x13
 
 ! Urxvt
 URxvt*termName:		rxvt-unicode-256color
