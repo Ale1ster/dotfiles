@@ -7,7 +7,7 @@ Config	{ font			= "xft:Terminus:size=8:antialias=True"
 							, Run Memory ["--Low","5", "--High","50", "--normal","yellow", "--high","red", "--template","<fc=#1c8c1c>Mem</fc>: <usedratio>%"] 10
 							, Run Swap ["--template","<fc=#1c8c1c>Swap</fc>: <usedratio>%"] 10
 							, Run Network "wlp3s0" ["--Low","80", "--High","200", "--normal","green", "--high","red", "--suffix","False", "--template","<fc=#1c8c1c><dev></fc>: <rx>Kb/s - <tx>Kb/s"] 20
-							, Run Battery ["--Low","10", "--High","80", "--high","green", "--normal","yellow", "--low","red", "--template","<fc=#1c8c1c>Bat</fc>: <left>% / <timeleft>", "--", "-f","ACAD/online", "-O","On", "-o","Off"] 300
+							, Run Battery ["--Low","10", "--High","80", "--high","green", "--normal","yellow", "--low","red", "--template","<fc=#1c8c1c>Bat</fc>: <acstatus><left>% / <timeleft>", "--", "-f","ACAD/online", "-O","+", "-o","~"] 300
 							, Run Date "%a %b %_d %_H:%M" "date" 300
 							, Run StdinReader
 							]
