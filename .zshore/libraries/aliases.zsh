@@ -32,6 +32,7 @@ alias ngrep='GREP_OPTIONS="--binary-files=without-match --line-number --color=au
 alias t='tree'
 alias ta='tree -aF --noreport'
 alias tap='tree -apF --noreport'
+alias taup='tree -apuF --noreport'
 # cd - fasd (https://github.com/clvv/fasd)
 alias p='pushd'
 alias o='popd'
@@ -71,8 +72,10 @@ alias lynx='lynx -cfg=~/.lynx.cfg'
 # astyle
 alias beautify_c='astyle --style=java --indent=force-tab=4 --add-brackets --indent-switches --indent-cases'
 # various
-alias rlwrap='rlwrap -Acr'
+alias rlwrap='rlwrap --ansi-colour-aware --complete-filenames --remember --history-no-dupes 2 --histsize 10000'		#'rlwrap -A -c -r -D 2 -s 10000'
 alias cx='chmod +x'
+alias c-x='chmod -x'
+alias natify='dos2unix'
 # xclipboard (primary, clipboard) x (copy, append, paste, clear, keep)
 alias pbc='xsel --input'
 alias pba='xsel --append'
@@ -87,13 +90,14 @@ alias cbk='xsel --output --clipboard | xsel --input --clipboard'
 # images
 alias feh='feh --auto-zoom --fullscreen'
 # mplayer
-alias vp='mplayer -name MPPlaylist -use-filename-title -loop 0 -fs'	# name is for workspace anchoring
+alias vp='mplayer -name MPPlaylist -use-filename-title -loop 0 -fs --'	# name is for workspace anchoring
 # stardict
 alias word='sdcv'
 # calendar
 alias calendar='cal --color=always'
 alias ycal='cal --color=always -y'
 # system
+alias sudo='sudo '
 alias discover='sudo airmon-ng start wlp3s0; sudo airodump-ng mon0; sudo airmon-ng stop mon0'
 alias _='sudo'
 alias oust='sudo pkill -u'
@@ -111,6 +115,7 @@ alias pacfiles='pacman -Ql'
 alias pacown='pacman -Qo'
 # languages
 alias bf='brainfuck'
+alias perlc='pp'
 # games
 alias nh='nethack'
 alias ts='typespeed'
