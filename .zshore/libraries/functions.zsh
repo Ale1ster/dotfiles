@@ -42,7 +42,7 @@ function play () {
 			*.pls | *.m3u)
 				mplayer -playlist "$1"
 				;;
-			*.mkv | *.avi | *.mp4 | *.m4v)
+			*.mkv | *.avi | *.mp4 | *.m4v | *.mov)
 				mplayer "$1"
 				;;
 			*)
